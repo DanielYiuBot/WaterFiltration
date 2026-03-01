@@ -1,0 +1,318 @@
+/* ============================================================
+   experiment.css – Experiment Flow Screens
+   Login, Consent, Tests, Instructions, Completion
+   ============================================================ */
+
+/* ---------- Centered Experiment Card ---------- */
+.experiment-card {
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  box-shadow: var(--shadow-card);
+}
+
+.centered-card {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.wide-card {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.experiment-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.experiment-card h1,
+.experiment-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.experiment-subtitle {
+  color: var(--color-text-sec);
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+/* ---------- Form Elements ---------- */
+.form-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-sec);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.7);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+}
+
+.form-error {
+  color: var(--color-red);
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+}
+
+/* ---------- Consent ---------- */
+.consent-body {
+  text-align: left;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary-dark);
+  cursor: pointer;
+}
+
+/* ---------- Test Questions ---------- */
+.test-desc {
+  color: var(--color-text-sec);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+}
+
+.test-questions {
+  text-align: left;
+}
+
+.test-question {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.question-number {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.question-text {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 0.92rem;
+}
+
+.option-label:hover {
+  background: rgba(79, 195, 247, 0.08);
+}
+
+.option-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary-dark);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.option-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+}
+
+.option-text {
+  flex: 1;
+}
+
+/* ---------- Instructions ---------- */
+.instructions-body {
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin-bottom: 28px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Scenario Progress Bar ---------- */
+.scenario-progress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.progress-label {
+  color: var(--color-text-sec);
+  font-weight: 600;
+}
+
+.progress-item {
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  color: var(--color-text-sec);
+}
+
+.progress-item.done {
+  background: rgba(129, 199, 132, 0.2);
+  color: #2E7D32;
+}
+
+/* ---------- Scenario Status (after filter) ---------- */
+.scenario-status {
+  text-align: center;
+  margin-top: 14px;
+  animation: fadeIn 0.4s ease;
+}
+
+.status-msg {
+  font-size: 0.92rem;
+  color: var(--color-text-sec);
+  margin-bottom: 8px;
+}
+
+.status-msg.status-complete {
+  color: #2E7D32;
+  font-weight: 600;
+}
+
+/* ---------- Scenario Card Done State ---------- */
+.scenario-card.scenario-done {
+  opacity: 0.6;
+  pointer-events: none;
+  position: relative;
+}
+
+.scenario-card.scenario-done::after {
+  content: '✓';
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.5rem;
+  color: #2E7D32;
+}
+
+/* ---------- Completion Screen ---------- */
+.completion-text {
+  white-space: pre-line;
+}
+
+.completion-summary {
+  margin: 24px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-sm);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  color: var(--color-text-sec);
+  font-size: 0.92rem;
+}
+
+.summary-value {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-primary-dark);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .experiment-card {
+    padding: 28px 20px;
+    margin: 0 12px;
+  }
+
+  .wide-card {
+    margin: 0 12px;
+  }
+
+  .option-label {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+}

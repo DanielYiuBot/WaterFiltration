@@ -1,0 +1,376 @@
+/* ============================================================
+   lab.css – ClearWater Lab  Bottle, Materials & Animations
+   ============================================================ */
+
+/* ---------- Material Cards (sidebar) ---------- */
+.material-sidebar h3 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.material-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  background: rgba(255,255,255,0.5);
+  cursor: grab;
+  transition: all var(--transition);
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+.material-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 12px rgba(79,195,247,0.18);
+}
+
+.material-card:active,
+.material-card.dragging {
+  cursor: grabbing;
+  opacity: 0.6;
+  transform: scale(0.96);
+}
+
+.material-swatch {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.swatch-gravel {
+  background:
+    radial-gradient(circle 5px at 30% 35%, #9E9E9E 60%, transparent 61%),
+    radial-gradient(circle 4px at 70% 25%, #BDBDBD 60%, transparent 61%),
+    radial-gradient(circle 6px at 55% 70%, #757575 60%, transparent 61%),
+    radial-gradient(circle 3px at 20% 75%, #BDBDBD 60%, transparent 61%),
+    #E0E0E0;
+}
+
+.swatch-sand {
+  background:
+    repeating-conic-gradient(#E8D5A3 0% 25%, #D4B96A 0% 50%) 0 0 / 6px 6px;
+  border-radius: 8px;
+}
+
+.swatch-carbon {
+  background:
+    radial-gradient(circle 3px at 25% 30%, #424242 60%, transparent 61%),
+    radial-gradient(circle 2px at 65% 20%, #616161 60%, transparent 61%),
+    radial-gradient(circle 4px at 50% 65%, #333333 60%, transparent 61%),
+    radial-gradient(circle 2.5px at 80% 75%, #4A4A4A 60%, transparent 61%),
+    #212121;
+}
+
+.swatch-cotton {
+  background: linear-gradient(135deg, #FAFAFA 0%, #F0F0F0 50%, #FFFFFF 100%);
+  border: 1px solid #E0E0E0;
+}
+
+.material-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.material-info strong {
+  font-size: 0.95rem;
+}
+
+.material-info small {
+  font-size: 0.78rem;
+  color: var(--color-text-sec);
+}
+
+/* ---------- Bottle ---------- */
+.bottle-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.bottle {
+  position: relative;
+  width: 260px;
+  min-height: 480px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.35) 0%,
+    rgba(255,255,255,0.18) 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 16px 16px 8px 8px;
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,0.25),
+    0 8px 32px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s;
+}
+
+.bottle.drag-over {
+  border-color: var(--color-primary);
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,0.25),
+    0 0 0 3px rgba(79,195,247,0.25),
+    0 8px 32px rgba(0,0,0,0.08);
+}
+
+/* Neck of bottle */
+.bottle::before {
+  content: '';
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 24px;
+  background: rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.5);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+/* ---------- Water Reservoir (top) ---------- */
+.water-reservoir {
+  height: 100px;
+  width: 100%;
+  transition: background 1.5s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.water-reservoir.scenario-A {
+  background: linear-gradient(180deg, #5D4037 0%, #795548 60%, #8D6E63 100%);
+}
+
+.water-reservoir.scenario-B {
+  background: linear-gradient(180deg, #33691E 0%, #558B2F 60%, #7CB342 100%);
+}
+
+.water-reservoir.filtered {
+  background: rgba(200, 220, 240, 0.2) !important;
+  transition: background 2s ease;
+}
+
+/* ---------- Bottle Layers ---------- */
+.bottle-layers {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;   /* layers stack bottom-up */
+  width: 100%;
+  position: relative;
+  min-height: 300px;
+}
+
+.placeholder-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-sec);
+  font-size: 0.85rem;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Individual layer inside bottle */
+.filter-layer {
+  width: 100%;
+  height: 68px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+  flex-shrink: 0;
+}
+
+.filter-layer .layer-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.filter-layer .layer-remove {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.25);
+  color: #fff;
+  font-size: 0.72rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 3;
+}
+
+.filter-layer:hover .layer-remove {
+  opacity: 1;
+}
+
+/* Material-specific layer styles */
+.filter-layer.layer-gravel {
+  background:
+    radial-gradient(circle 8px at 20% 40%, #9E9E9E 50%, transparent 51%),
+    radial-gradient(circle 6px at 50% 25%, #BDBDBD 50%, transparent 51%),
+    radial-gradient(circle 9px at 75% 60%, #757575 50%, transparent 51%),
+    radial-gradient(circle 5px at 35% 75%, #A0A0A0 50%, transparent 51%),
+    radial-gradient(circle 7px at 85% 30%, #888888 50%, transparent 51%),
+    #B0BEC5;
+}
+
+.filter-layer.layer-sand {
+  background:
+    repeating-conic-gradient(#E8D5A3 0% 25%, #D4B96A 0% 50%) 0 0 / 8px 8px;
+}
+
+.filter-layer.layer-carbon {
+  background:
+    radial-gradient(circle 4px at 15% 30%, #424242 50%, transparent 51%),
+    radial-gradient(circle 3px at 40% 60%, #616161 50%, transparent 51%),
+    radial-gradient(circle 5px at 65% 25%, #333333 50%, transparent 51%),
+    radial-gradient(circle 3px at 85% 70%, #4A4A4A 50%, transparent 51%),
+    radial-gradient(circle 4px at 55% 80%, #383838 50%, transparent 51%),
+    #1B1B1B;
+}
+
+.filter-layer.layer-cotton {
+  background: linear-gradient(135deg,
+    #FAFAFA 0%, #F5F5F5 25%, #FFFFFF 50%, #F0F0F0 75%, #FAFAFA 100%
+  );
+  border-top: 1px dashed #E0E0E0;
+  border-bottom: 1px dashed #E0E0E0;
+}
+.filter-layer.layer-cotton .layer-label {
+  color: #9E9E9E;
+  text-shadow: none;
+}
+
+/* ---------- Water Output Spout ---------- */
+.water-output {
+  height: 16px;
+  width: 60%;
+  margin: 0 auto;
+  background: transparent;
+  border-radius: 0 0 8px 8px;
+  transition: background 1.5s ease;
+}
+
+/* ---------- Beaker ---------- */
+.beaker {
+  width: 180px;
+  height: 120px;
+  background: rgba(255,255,255,0.25);
+  border: 2px solid rgba(200,220,240,0.5);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.15);
+}
+
+.beaker::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -10px;
+  right: -10px;
+  height: 4px;
+  background: rgba(200,220,240,0.5);
+  border-radius: 2px;
+}
+
+.beaker-water {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  transition: height 2s ease, background 2s ease;
+  border-radius: 0 0 10px 10px;
+}
+
+/* ---------- Action Buttons ---------- */
+.bottle-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* ---------- Water Drop Animation ---------- */
+.water-drop {
+  position: absolute;
+  width: 14px;
+  height: 18px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  z-index: 10;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ---------- Clog Warning Overlay ---------- */
+.clog-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(229, 115, 115, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  animation: clogPulse 1.2s ease infinite;
+  border-radius: 14px;
+}
+
+.clog-overlay span {
+  background: rgba(255,255,255,0.92);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-red);
+  box-shadow: var(--shadow-card);
+}
+
+@keyframes clogPulse {
+  0%, 100% { background: rgba(229, 115, 115, 0.10); }
+  50%      { background: rgba(229, 115, 115, 0.22); }
+}
+
+/* ---------- Drip Animation (water falling into beaker) ---------- */
+@keyframes drip {
+  0%   { top: 0; opacity: 0.9; }
+  100% { top: 100%; opacity: 0.3; }
+}
+
+/* ---------- Water flow within layers ---------- */
+@keyframes waterSeep {
+  0%   { top: -14px; opacity: 0.9; }
+  100% { top: calc(100% + 14px); opacity: 0.5; }
+}
+
+/* ---------- Layer separation lines ---------- */
+.filter-layer + .filter-layer {
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
