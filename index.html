@@ -6,9 +6,9 @@
   <title>ClearWater Lab V2</title>
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/lab.css" />
-  <link rel="stylesheet" href="css/experiment.css" />
+  <link rel="stylesheet" href="css/style.css?v=20260510-11" />
+  <link rel="stylesheet" href="css/lab.css?v=20260510-11" />
+  <link rel="stylesheet" href="css/experiment.css?v=20260510-11" />
   <!-- chatbot.css is loaded inside the Dr. H2O Shadow DOM -->
 </head>
 <body>
@@ -60,45 +60,53 @@
 
       <div class="task1-layout">
         <aside class="task1-inventory">
-          <h3 data-i18n="materialsTitle">材料庫</h3>
-          <div class="material-card task1-material" draggable="true" data-material="gravel">
-            <div class="material-swatch swatch-gravel"></div>
-            <div class="material-info">
-              <strong data-i18n="gravel">大石子</strong>
-              <small data-i18n="gravelDesc">攔截最大顆粒雜質</small>
+          <div class="task1-inventory-header">
+            <h3 data-i18n="task1MaterialsTitle">濾材選擇區</h3>
+            <p data-i18n="task1MaterialsSubtitle">（拖動到右邊排序區）</p>
+          </div>
+          <div class="task1-materials-grid">
+            <div class="material-card task1-material" draggable="true" data-material="gravel">
+              <div class="material-swatch material-image material-image-gravel"></div>
+              <div class="material-info">
+                <strong data-i18n="gravel">石頭</strong>
+                <small data-i18n="gravelDesc">空隙最大，阻擋大顆粒雜質</small>
+              </div>
+            </div>
+            <div class="material-card task1-material" draggable="true" data-material="coarseSand">
+              <div class="material-swatch material-image material-image-coarseSand"></div>
+              <div class="material-info">
+                <strong data-i18n="coarseSand">粗砂粒</strong>
+                <small data-i18n="coarseSandDesc">空隙較大，阻擋中顆粒雜質</small>
+              </div>
+            </div>
+            <div class="material-card task1-material" draggable="true" data-material="sand">
+              <div class="material-swatch material-image material-image-sand"></div>
+              <div class="material-info">
+                <strong data-i18n="sand">幼砂粒</strong>
+                <small data-i18n="sandDesc">空隙較小，阻擋細小雜質</small>
+              </div>
+            </div>
+            <div class="material-card task1-material" draggable="true" data-material="cotton">
+              <div class="material-swatch material-image material-image-cotton"></div>
+              <div class="material-info">
+                <strong data-i18n="cotton">棉花</strong>
+                <small data-i18n="cottonDesc">空隙最小，阻擋微細雜質</small>
+              </div>
             </div>
           </div>
-          <div class="material-card task1-material" draggable="true" data-material="pebble">
-            <div class="material-swatch swatch-pebble"></div>
-            <div class="material-info">
-              <strong data-i18n="pebble">小石子</strong>
-              <small data-i18n="pebbleDesc">過濾中大型顆粒</small>
-            </div>
-          </div>
-          <div class="material-card task1-material" draggable="true" data-material="sand">
-            <div class="material-swatch swatch-sand"></div>
-            <div class="material-info">
-              <strong data-i18n="sand">細砂</strong>
-              <small data-i18n="sandDesc">過濾細小懸浮顆粒</small>
-            </div>
-          </div>
-          <div class="material-card task1-material" draggable="true" data-material="cotton">
-            <div class="material-swatch swatch-cotton"></div>
-            <div class="material-info">
-              <strong data-i18n="cotton">棉花</strong>
-              <small data-i18n="cottonDesc">最後攔截微細顆粒</small>
-            </div>
-          </div>
+          <p class="task1-inventory-hint" data-i18n="task1MaterialsHint">拖動濾材卡到右邊的排序區</p>
         </aside>
 
         <main class="task1-board">
           <h3 data-i18n="rankingBoardTitle">排序區（由左到右）</h3>
-          <ol id="ranking-slots" class="ranking-slots">
-            <li class="ranking-slot" data-index="0"></li>
-            <li class="ranking-slot" data-index="1"></li>
-            <li class="ranking-slot" data-index="2"></li>
-            <li class="ranking-slot" data-index="3"></li>
-          </ol>
+          <div id="ranking-slots" class="ranking-slots">
+            <span class="ranking-size-label" data-i18n="largestParticle">顆粒最大</span>
+            <div class="ranking-slot" data-index="0"></div>
+            <div class="ranking-slot" data-index="1"></div>
+            <div class="ranking-slot" data-index="2"></div>
+            <div class="ranking-slot" data-index="3"></div>
+            <span class="ranking-size-label" data-i18n="smallestParticle">顆粒最小</span>
+          </div>
           <p id="task1-ready" class="ranking-ready hidden" data-i18n="rankingReady">排序正確！可開始平行濾水展示。</p>
           <div class="task1-actions">
             <button id="task1-confirm-btn" class="btn btn-primary" disabled data-i18n="startParallelDemo">確認次序</button>
@@ -126,18 +134,18 @@
           </div>
           <div class="mini-score hidden"></div>
         </div>
-        <div class="mini-filter" data-material="pebble">
-          <div class="mini-filter-name">Pebble</div>
+        <div class="mini-filter" data-material="coarseSand">
+          <div class="mini-filter-name">Coarse Sand</div>
           <div class="mini-filter-body">
             <div class="mini-filter-reservoir"></div>
-            <div class="mini-filter-media layer-pebble"></div>
+            <div class="mini-filter-media layer-coarseSand"></div>
             <div class="mini-filter-stream"></div>
             <div class="mini-filter-beaker"><div class="mini-water"></div></div>
           </div>
           <div class="mini-score hidden"></div>
         </div>
         <div class="mini-filter" data-material="sand">
-          <div class="mini-filter-name">Sand</div>
+          <div class="mini-filter-name">Fine Sand</div>
           <div class="mini-filter-body">
             <div class="mini-filter-reservoir"></div>
             <div class="mini-filter-media layer-sand"></div>
@@ -174,6 +182,7 @@
       </div>
       <p id="code-lock-error" class="form-error hidden" data-i18n="codeLockWrong">代碼錯誤，請再試一次。</p>
       <button id="code-lock-btn" class="btn btn-primary btn-lg btn-full" data-i18n="codeLockBtn">解鎖任務 2</button>
+      <button id="code-lock-back-btn" class="btn btn-outline btn-lg btn-full code-lock-back" data-i18n="codeLockBackBtn">上一頁</button>
     </div>
   </section>
 
@@ -182,7 +191,6 @@
     <div id="task-header" class="task-header">
       <span class="task-label" data-i18n="taskLabel">當前任務</span>
       <span id="task-name" class="task-name" data-i18n="task2Title">任務 2：泥濘的河水</span>
-      <p class="experiment-subtitle" data-i18n="task2Desc">目標：提升清澈度並維持合理流速。</p>
     </div>
 
     <div class="lab-layout">
@@ -190,31 +198,31 @@
         <h3 data-i18n="materialsTitle">濾材材料庫</h3>
 
         <div class="material-card" draggable="true" data-material="gravel">
-          <div class="material-swatch swatch-gravel"></div>
+          <div class="material-swatch material-image material-image-gravel"></div>
           <div class="material-info">
             <strong data-i18n="gravel">大石子</strong>
             <small data-i18n="gravelDesc">攔截最大顆粒雜質</small>
           </div>
         </div>
 
-        <div class="material-card" draggable="true" data-material="pebble">
-          <div class="material-swatch swatch-pebble"></div>
+        <div class="material-card" draggable="true" data-material="coarseSand">
+          <div class="material-swatch material-image material-image-coarseSand"></div>
           <div class="material-info">
-            <strong data-i18n="pebble">小石子</strong>
-            <small data-i18n="pebbleDesc">過濾中大型顆粒</small>
+            <strong data-i18n="coarseSand">粗砂粒</strong>
+            <small data-i18n="coarseSandDesc">過濾中大型顆粒</small>
           </div>
         </div>
 
         <div class="material-card" draggable="true" data-material="sand">
-          <div class="material-swatch swatch-sand"></div>
+          <div class="material-swatch material-image material-image-sand"></div>
           <div class="material-info">
-            <strong data-i18n="sand">細砂</strong>
+            <strong data-i18n="sand">幼砂粒</strong>
             <small data-i18n="sandDesc">過濾細小懸浮顆粒</small>
           </div>
         </div>
 
         <div class="material-card" draggable="true" data-material="cotton">
-          <div class="material-swatch swatch-cotton"></div>
+          <div class="material-swatch material-image material-image-cotton"></div>
           <div class="material-info">
             <strong data-i18n="cotton">棉花</strong>
             <small data-i18n="cottonDesc">最後攔截微細顆粒</small>
@@ -301,14 +309,14 @@
   <!-- ============================================================
        SCRIPTS (order matters)
        ============================================================ -->
-  <script src="js/i18n.js"></script>
-  <script src="js/data-logger.js"></script>
-  <script src="js/scoring.js"></script>
-  <script src="js/animation.js"></script>
-  <script src="js/lab.js"></script>
-  <script src="js/chatbot.js"></script>
-  <script src="js/experiment.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/i18n.js?v=20260510-11"></script>
+  <script src="js/data-logger.js?v=20260510-11"></script>
+  <script src="js/scoring.js?v=20260510-11"></script>
+  <script src="js/animation.js?v=20260510-11"></script>
+  <script src="js/lab.js?v=20260510-11"></script>
+  <script src="js/chatbot.js?v=20260510-11"></script>
+  <script src="js/experiment.js?v=20260510-11"></script>
+  <script src="js/app.js?v=20260510-11"></script>
 
 </body>
 </html>

@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const ORDER = ['gravel', 'pebble', 'sand', 'cotton'];
+  const ORDER = ['gravel', 'coarseSand', 'sand', 'cotton'];
   const ranking = [null, null, null, null];
   const backBtn = document.getElementById('back-btn');
   const codeBtn = document.getElementById('task1-code-btn');
@@ -18,13 +18,13 @@
   const slots = [...document.querySelectorAll('.ranking-slot')];
   let task1Confirmed = false;
   let lastDemoResults = [];
-  const GAP_RANK = { gravel: 4, pebble: 3, sand: 2, cotton: 1 };
+  const GAP_RANK = { gravel: 4, coarseSand: 3, sand: 2, cotton: 1 };
   const INVERSION_HINT_KEYS = {
-    'pebble>gravel': 'rankingPebbleBeforeGravel',
+    'coarseSand>gravel': 'rankingCoarseSandBeforeGravel',
     'sand>gravel': 'rankingSandBeforeGravel',
-    'sand>pebble': 'rankingSandBeforePebble',
+    'sand>coarseSand': 'rankingSandBeforeCoarseSand',
     'cotton>gravel': 'rankingCottonBeforeGravel',
-    'cotton>pebble': 'rankingCottonBeforePebble',
+    'cotton>coarseSand': 'rankingCottonBeforeCoarseSand',
     'cotton>sand': 'rankingCottonBeforeSand',
   };
 
@@ -213,7 +213,7 @@
     if (readyEl) readyEl.classList.remove('hidden');
     if (confirmBtn) confirmBtn.classList.add('hidden');
     if (clearBtn) clearBtn.classList.add('hidden');
-    showRankingFeedback(I18n.t('rankingReady'), 'success');
+    if (feedbackEl) feedbackEl.classList.add('hidden');
     Experiment.onTask1Completed([...ranking]);
     updateConfirmButton();
     return true;
@@ -250,27 +250,25 @@
 
   function showRankingFeedback(message, type) {
     if (!feedbackEl) return;
+    feedbackEl.classList.remove('hidden');
     feedbackEl.textContent = message;
     feedbackEl.className = `ranking-feedback ${type || ''}`.trim();
   }
 
   function getWrongOrderReminders() {
-    const reminders = [];
     for (let i = 0; i < ranking.length - 1; i++) {
       for (let j = i + 1; j < ranking.length; j++) {
         const first = ranking[i];
         const later = ranking[j];
         if (!first || !later) continue;
         if (GAP_RANK[first] < GAP_RANK[later]) {
-          reminders.push(
-            I18n.t(INVERSION_HINT_KEYS[`${first}>${later}`] || 'rankingGapReminder')
-              .replace('{small}', I18n.t(first))
-              .replace('{large}', I18n.t(later))
-          );
+          return I18n.t(INVERSION_HINT_KEYS[`${first}>${later}`] || 'rankingGapReminder')
+            .replace('{small}', I18n.t(first))
+            .replace('{large}', I18n.t(later));
         }
       }
     }
-    return reminders.join('\n');
+    return '';
   }
 
   function setDragPayload(e, payload) {
@@ -338,7 +336,7 @@
       const card = document.querySelector(`#task1-filters .mini-filter[data-material="${result.material}"]`);
       const score = card?.querySelector('.mini-score');
       if (!score || score.classList.contains('hidden')) return;
-      score.textContent = `${I18n.t('clarityLabel')} ${result.clarity}% | ${I18n.t('speedLabel')} ${result.flowTime}${I18n.t('seconds')}`;
+      score.textContent = `${I18n.t('speedLabel')} ${result.flowTime}${I18n.t('seconds')}`;
     });
   }
 

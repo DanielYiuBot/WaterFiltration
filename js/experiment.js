@@ -90,6 +90,7 @@ const Experiment = (() => {
 
   function setupCodeLock() {
     const btn = document.getElementById('code-lock-btn');
+    const backBtn = document.getElementById('code-lock-back-btn');
     const input = document.getElementById('code-lock-input');
     const err = document.getElementById('code-lock-error');
     if (!btn || !input || !err) return;
@@ -109,6 +110,12 @@ const Experiment = (() => {
     };
 
     btn.addEventListener('click', unlock);
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        err.classList.add('hidden');
+        showScreen('task1-demo-screen');
+      });
+    }
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') unlock();
     });

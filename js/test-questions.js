@@ -15,7 +15,7 @@ const TestQuestions = {
       },
       options: {
         A: { zh: '棉花', en: 'Cotton' },
-        B: { zh: '細砂', en: 'Fine Sand' },
+        B: { zh: '幼砂粒', en: 'Fine Sand' },
         C: { zh: '大石子', en: 'Gravel' },
         D: { zh: '活性碳', en: 'Activated Carbon' },
       },
@@ -28,10 +28,10 @@ const TestQuestions = {
         en: 'What is the correct order of materials in a water filter (from top to bottom)?'
       },
       options: {
-        A: { zh: '棉花 → 細砂 → 活性碳 → 大石子', en: 'Cotton → Sand → Carbon → Gravel' },
-        B: { zh: '大石子 → 細砂 → 活性碳 → 棉花', en: 'Gravel → Sand → Carbon → Cotton' },
-        C: { zh: '細砂 → 大石子 → 棉花 → 活性碳', en: 'Sand → Gravel → Cotton → Carbon' },
-        D: { zh: '活性碳 → 棉花 → 大石子 → 細砂', en: 'Carbon → Cotton → Gravel → Sand' },
+        A: { zh: '棉花 → 幼砂粒 → 活性碳 → 大石子', en: 'Cotton → Sand → Carbon → Gravel' },
+        B: { zh: '大石子 → 幼砂粒 → 活性碳 → 棉花', en: 'Gravel → Sand → Carbon → Cotton' },
+        C: { zh: '幼砂粒 → 大石子 → 棉花 → 活性碳', en: 'Sand → Gravel → Cotton → Carbon' },
+        D: { zh: '活性碳 → 棉花 → 大石子 → 幼砂粒', en: 'Carbon → Cotton → Gravel → Sand' },
       },
       correct: 'B',
     },
@@ -71,7 +71,7 @@ const TestQuestions = {
       },
       options: {
         A: { zh: '大石子', en: 'Gravel' },
-        B: { zh: '細砂', en: 'Fine Sand' },
+        B: { zh: '幼砂粒', en: 'Fine Sand' },
         C: { zh: '棉花', en: 'Cotton' },
         D: { zh: '活性碳', en: 'Activated Carbon' },
       },
@@ -114,7 +114,7 @@ const TestQuestions = {
       options: {
         A: { zh: '棉花可以吸附氣味', en: 'Cotton can adsorb odors' },
         B: { zh: '棉花可以殺死細菌', en: 'Cotton can kill bacteria' },
-        C: { zh: '防止上層的細砂流失，同時捕捉剩餘微粒', en: 'Preventing sand from escaping while catching remaining fine particles' },
+        C: { zh: '防止上層的幼砂粒流失，同時捕捉剩餘微粒', en: 'Preventing sand from escaping while catching remaining fine particles' },
         D: { zh: '棉花可以讓水流更快', en: 'Cotton makes water flow faster' },
       },
       correct: 'C',
@@ -132,7 +132,7 @@ const TestQuestions = {
         A: { zh: '活性碳', en: 'Activated Carbon' },
         B: { zh: '大石子', en: 'Gravel' },
         C: { zh: '棉花', en: 'Cotton' },
-        D: { zh: '細砂', en: 'Fine Sand' },
+        D: { zh: '幼砂粒', en: 'Fine Sand' },
       },
       correct: 'B',
     },
@@ -143,10 +143,10 @@ const TestQuestions = {
         en: 'For an effective water filter, what is the best order of materials from top to bottom?'
       },
       options: {
-        A: { zh: '細砂 → 棉花 → 大石子 → 活性碳', en: 'Sand → Cotton → Gravel → Carbon' },
-        B: { zh: '活性碳 → 大石子 → 細砂 → 棉花', en: 'Carbon → Gravel → Sand → Cotton' },
-        C: { zh: '大石子 → 細砂 → 活性碳 → 棉花', en: 'Gravel → Sand → Carbon → Cotton' },
-        D: { zh: '棉花 → 活性碳 → 細砂 → 大石子', en: 'Cotton → Carbon → Sand → Gravel' },
+        A: { zh: '幼砂粒 → 棉花 → 大石子 → 活性碳', en: 'Sand → Cotton → Gravel → Carbon' },
+        B: { zh: '活性碳 → 大石子 → 幼砂粒 → 棉花', en: 'Carbon → Gravel → Sand → Cotton' },
+        C: { zh: '大石子 → 幼砂粒 → 活性碳 → 棉花', en: 'Gravel → Sand → Carbon → Cotton' },
+        D: { zh: '棉花 → 活性碳 → 幼砂粒 → 大石子', en: 'Cotton → Carbon → Sand → Gravel' },
       },
       correct: 'C',
     },
@@ -159,7 +159,7 @@ const TestQuestions = {
       options: {
         A: { zh: '更多的大石子', en: 'More gravel' },
         B: { zh: '活性碳', en: 'Activated Carbon' },
-        C: { zh: '更多的細砂', en: 'More fine sand' },
+        C: { zh: '更多的幼砂粒', en: 'More fine sand' },
         D: { zh: '更多的棉花', en: 'More cotton' },
       },
       correct: 'B',
@@ -209,7 +209,7 @@ const TestQuestions = {
     {
       id: 'post7',
       question: {
-        zh: '如果濾水器中只放了大石子和細砂（沒有活性碳和棉花），過濾發臭的池塘水後，水質會如何？',
+        zh: '如果濾水器中只放了大石子和幼砂粒（沒有活性碳和棉花），過濾發臭的池塘水後，水質會如何？',
         en: 'If a filter only contains gravel and sand (no carbon or cotton), what would the water be like after filtering smelly pond water?'
       },
       options: {
@@ -229,7 +229,7 @@ const TestQuestions = {
       options: {
         A: { zh: '最上層，因為棉花最能攔截大雜質', en: 'At the top, because cotton catches large debris best' },
         B: { zh: '中間層，因為棉花需要和活性碳一起使用', en: 'In the middle, because cotton needs to work with carbon' },
-        C: { zh: '最底層，因為棉花可以防止細砂流失並過濾最細的微粒', en: 'At the bottom, because cotton prevents sand from escaping and filters the finest particles' },
+        C: { zh: '最底層，因為棉花可以防止幼砂粒流失並過濾最細的微粒', en: 'At the bottom, because cotton prevents sand from escaping and filters the finest particles' },
         D: { zh: '不需要棉花，其他材料就夠了', en: 'Cotton is not needed; other materials are sufficient' },
       },
       correct: 'C',

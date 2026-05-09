@@ -70,7 +70,8 @@ async function runTask1ParallelDemo(resultsByMaterial) {
     const result = resultsByMaterial[material];
     if (!result) return;
 
-    const durationMs = Math.round(result.flowTime * 1000);
+    const demoDuration = result.demoDuration || result.flowTime;
+    const durationMs = Math.round(demoDuration * 1000);
     const water = card.querySelector('.mini-water');
     const stream = card.querySelector('.mini-filter-stream');
     const score = card.querySelector('.mini-score');
@@ -78,7 +79,7 @@ async function runTask1ParallelDemo(resultsByMaterial) {
 
     water.classList.add(`mini-water-${material}`);
     card.classList.add('running');
-    if (stream) stream.style.animationDuration = `${Math.max(0.7, result.flowTime / 2)}s`;
+    if (stream) stream.style.animationDuration = `${Math.max(0.7, demoDuration / 2)}s`;
     water.style.transition = `height ${durationMs}ms linear`;
     requestAnimationFrame(() => {
       water.style.height = '100%';
@@ -86,13 +87,14 @@ async function runTask1ParallelDemo(resultsByMaterial) {
 
     await sleep(durationMs);
 
-    score.textContent = `${I18n.t('clarityLabel')} ${result.clarity}% | ${I18n.t('speedLabel')} ${result.flowTime}${I18n.t('seconds')}`;
+    score.textContent = `${I18n.t('speedLabel')} ${result.flowTime}${I18n.t('seconds')}`;
     score.classList.remove('hidden');
 
     completion.push({
       material,
       clarity: result.clarity,
       flowTime: result.flowTime,
+      demoDuration,
       finishedAtOffsetMs: Date.now() - startTime,
     });
     card.classList.remove('running');

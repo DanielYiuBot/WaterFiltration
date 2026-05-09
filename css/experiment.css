@@ -204,6 +204,10 @@
   border-radius: var(--radius-sm);
 }
 
+.code-lock-back {
+  margin-top: 12px;
+}
+
 /* ---------- Scenario Progress Bar ---------- */
 .scenario-progress {
   display: flex;

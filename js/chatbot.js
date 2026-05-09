@@ -20,19 +20,20 @@ function buildSystemPrompt() {
 
 當你分析實驗結果時，請重點提示：
 - 較大孔隙的材料（石頭、粗砂粒）較適合先攔截大顆粒。
-- 較小孔隙的材料（細砂粒、棉花）較適合放後面，幫助濾走細小泥沙。
+- 較小孔隙的材料（幼砂粒、棉花）較適合放後面，幫助濾走細小泥沙。
 - 如果水流太慢或堵塞，引導學生思考是否太細的材料放得太前。
 - 如果水仍然混濁，引導學生比較不同濾材的孔隙大小和排列次序。`;
 }
 
 function buildUserPayload(result) {
-  const map = { gravel: '石頭/Gravel', pebble: '粗砂粒/Pebble', sand: '細砂粒/Sand', cotton: '棉花/Cotton' };
+  const map = { gravel: '石頭/Gravel', coarseSand: '粗砂粒/Coarse Sand', sand: '幼砂粒/Fine Sand', cotton: '棉花/Cotton' };
   const layerNames = (result.layers || []).map((m) => map[m] || m);
   return `學生任務 2 過濾結果：
 濾材順序(上到下): ${layerNames.join(' -> ')}
 清澈度: ${result.clarity}%
 流速: ${result.clogged ? 'clogged' : result.flowTime + 's'}
 分數: ${result.score}/100
+科學解釋: ${result.scienceExplanation || '請根據濾材孔隙大小和排列次序分析。'}
 請給 3-5 句建議。`;
 }
 
@@ -199,6 +200,9 @@ class DrH2O extends HTMLElement {
     if (r.clogged) {
       lines.push('你的濾材堵塞了，避免把棉花放在最上層。');
       return lines.join('\n\n');
+    }
+    if (r.scienceExplanation) {
+      lines.push(r.scienceExplanation);
     }
     if (r.layers[0] !== 'gravel' && r.layers.includes('gravel')) {
       lines.push('建議把石頭放在上層先擋大顆粒。');
