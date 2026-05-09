@@ -1,117 +1,131 @@
 /* ============================================================
-   animation.js – ClearWater Lab  Water Flow & Color Animation
-   ============================================================ */
+  animation.js – ClearWater Lab V2 Animations
+  ============================================================ */
 
-/**
- * Color palette for water at different purity levels.
- * We interpolate between dirty → clean.
- */
 const WATER_COLORS = {
-  A: {
-    dirty: 'rgba(93, 64, 55, 0.85)',      // muddy brown
-    mid:   'rgba(160, 130, 100, 0.55)',
-    clean: 'rgba(173, 216, 245, 0.35)',    // clear blue tint
-  },
-  B: {
-    dirty: 'rgba(51, 105, 30, 0.80)',      // algae green
-    mid:   'rgba(120, 170, 80, 0.50)',
-    clean: 'rgba(173, 216, 245, 0.35)',
-  },
+  dirty: 'rgba(93, 64, 55, 0.85)',
+  clean: 'rgba(173, 216, 245, 0.35)',
 };
 
-/**
- * Run the full filtration animation.
- *
- * @param {string}   scenario – 'A' or 'B'
- * @param {string[]} layers   – material names top→bottom
- * @param {object}   result   – output of Scoring.computeFilterResult
- * @returns {Promise} resolves when animation is complete
- */
-async function runFilterAnimation(scenario, layers, result) {
-  const bottle    = document.getElementById('bottle');
+async function runFilterAnimation(layers, result) {
+  const bottle = document.getElementById('bottle');
   const reservoir = document.getElementById('water-reservoir');
-  const beaker    = document.getElementById('beaker-water');
-  const layerEls  = [...document.querySelectorAll('#bottle-layers .filter-layer')];
+  const beaker = document.getElementById('beaker-water');
 
-  // Reverse layerEls so index 0 = topmost visual layer
-  // (they are rendered bottom-up in CSS column-reverse, but DOM order is bottom-first)
-  const topToBottom = [...layerEls].reverse();
-
-  const colors = WATER_COLORS[scenario] || WATER_COLORS.A;
-
-  /* --- Handle clog --- */
   if (result.clogged) {
-    await animateClog(bottle, reservoir, colors);
+    await animateClog(bottle, reservoir);
     return;
   }
 
-  /* --- Normal flow --- */
-  const totalDuration = Math.min(result.flowTime, 15) * 1000; // cap at 15s
-  const perLayer = layers.length > 0 ? totalDuration / (layers.length + 1) : totalDuration;
+  const totalDuration = Math.min(result.flowTime * 0.72, 10) * 1000;
+  const flowColumn = document.createElement('div');
+  flowColumn.className = 'bottle-flow-column';
+  const stream = document.createElement('div');
+  stream.className = 'bottle-filter-stream';
+  stream.style.animationDuration = `${Math.max(0.7, result.flowTime / 2)}s`;
+  bottle.appendChild(flowColumn);
+  bottle.appendChild(stream);
 
-  // 1. Drain reservoir
-  reservoir.style.transition = `background ${totalDuration}ms ease`;
-  reservoir.classList.add('filtered');
+  reservoir.style.transition = 'none';
+  reservoir.classList.remove('filtered');
+  reservoir.style.background = 'linear-gradient(180deg, #5D4037 0%, #795548 60%, #8D6E63 100%)';
 
-  // 2. Animate drops through each layer
-  let currentColor = colors.dirty;
-  for (let i = 0; i < topToBottom.length; i++) {
-    const progress = (i + 1) / topToBottom.length;
-    currentColor = interpolateColor(colors.dirty, colors.clean, progress);
-    await animateDropThroughLayer(topToBottom[i], currentColor, perLayer);
-  }
+  beaker.style.background = interpolateColor(WATER_COLORS.dirty, WATER_COLORS.clean, result.clarity / 100);
+  beaker.style.transition = `height ${totalDuration}ms linear, background ${totalDuration}ms ease`;
+  requestAnimationFrame(() => {
+    flowColumn.classList.add('running');
+    stream.classList.add('running');
+    beaker.style.height = '70%';
+  });
 
-  // 3. Fill beaker with output water
-  const finalColor = interpolateColorFromClarity(colors, result.clarity);
-  beaker.style.background = finalColor;
-  beaker.style.height = '70%';
-
-  // Small delay for visual effect
-  await sleep(400);
+  await sleep(totalDuration);
+  flowColumn.remove();
+  stream.remove();
+  await sleep(300);
 }
 
-/**
- * Animate clog effect – water barely moves, red overlay appears.
- */
-async function animateClog(bottle, reservoir, colors) {
-  // Show clog overlay
+async function runTask1ParallelDemo(resultsByMaterial) {
+  const cards = [...document.querySelectorAll('#task1-filters .mini-filter')];
+  const startTime = Date.now();
+  const completion = [];
+
+  cards.forEach((card) => {
+    const water = card.querySelector('.mini-water');
+    const stream = card.querySelector('.mini-filter-stream');
+    const score = card.querySelector('.mini-score');
+    card.classList.remove('running', 'complete');
+    if (water) {
+      water.style.height = '0%';
+      water.className = 'mini-water';
+    }
+    if (stream) stream.style.animationDuration = '';
+    if (score) {
+      score.classList.add('hidden');
+      score.textContent = '';
+    }
+  });
+
+  await Promise.all(cards.map(async (card) => {
+    const material = card.dataset.material;
+    const result = resultsByMaterial[material];
+    if (!result) return;
+
+    const durationMs = Math.round(result.flowTime * 1000);
+    const water = card.querySelector('.mini-water');
+    const stream = card.querySelector('.mini-filter-stream');
+    const score = card.querySelector('.mini-score');
+    if (!water || !score) return;
+
+    water.classList.add(`mini-water-${material}`);
+    card.classList.add('running');
+    if (stream) stream.style.animationDuration = `${Math.max(0.7, result.flowTime / 2)}s`;
+    water.style.transition = `height ${durationMs}ms linear`;
+    requestAnimationFrame(() => {
+      water.style.height = '100%';
+    });
+
+    await sleep(durationMs);
+
+    score.textContent = `${I18n.t('clarityLabel')} ${result.clarity}% | ${I18n.t('speedLabel')} ${result.flowTime}${I18n.t('seconds')}`;
+    score.classList.remove('hidden');
+
+    completion.push({
+      material,
+      clarity: result.clarity,
+      flowTime: result.flowTime,
+      finishedAtOffsetMs: Date.now() - startTime,
+    });
+    card.classList.remove('running');
+    card.classList.add('complete');
+  }));
+
+  return completion.sort((a, b) => a.finishedAtOffsetMs - b.finishedAtOffsetMs);
+}
+
+async function animateClog(bottle, reservoir) {
   const overlay = document.createElement('div');
   overlay.className = 'clog-overlay';
-  overlay.innerHTML = `<span data-i18n="clogWarning">${I18n.t('clogWarning')}</span>`;
+  overlay.innerHTML = `<span>${I18n.t('clogWarning')}</span>`;
   bottle.appendChild(overlay);
 
-  // Slightly drain reservoir (water is stuck)
   reservoir.style.transition = 'background 3s ease';
-  // Just shift color a tiny bit
-  reservoir.style.background = shiftColor(colors.dirty, 0.05);
-
-  await sleep(3000);
-
-  // Remove overlay after a moment (user can clear and retry)
-  setTimeout(() => {
-    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-  }, 6000);
+  reservoir.style.background = interpolateColor(WATER_COLORS.dirty, WATER_COLORS.clean, 0.08);
+  await sleep(2500);
+  setTimeout(() => overlay.remove(), 2000);
 }
 
-/**
- * Animate a single water drop passing through a layer element.
- */
 function animateDropThroughLayer(layerEl, color, duration) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const drop = document.createElement('div');
     drop.className = 'water-drop';
     drop.style.background = color;
     layerEl.style.position = 'relative';
     layerEl.appendChild(drop);
 
-    const anim = drop.animate([
-      { top: '-14px', opacity: 0.9 },
-      { top: 'calc(100% + 14px)', opacity: 0.5 },
-    ], {
-      duration: duration,
-      easing: 'ease-in-out',
-      fill: 'forwards',
-    });
+    const anim = drop.animate(
+      [{ top: '-14px', opacity: 0.9 }, { top: 'calc(100% + 14px)', opacity: 0.5 }],
+      { duration, easing: 'ease-in-out', fill: 'forwards' }
+    );
 
     anim.onfinish = () => {
       drop.remove();
@@ -120,17 +134,10 @@ function animateDropThroughLayer(layerEl, color, duration) {
   });
 }
 
-/* ---------- Color Utilities ---------- */
-
-/**
- * Simple linear interpolation between two rgba color strings.
- * t goes from 0 (colorA) to 1 (colorB).
- */
 function interpolateColor(colorA, colorB, t) {
   const a = parseRgba(colorA);
   const b = parseRgba(colorB);
   if (!a || !b) return colorB;
-
   const r = Math.round(a.r + (b.r - a.r) * t);
   const g = Math.round(a.g + (b.g - a.g) * t);
   const bl = Math.round(a.b + (b.b - a.b) * t);
@@ -138,48 +145,29 @@ function interpolateColor(colorA, colorB, t) {
   return `rgba(${r}, ${g}, ${bl}, ${al})`;
 }
 
-function interpolateColorFromClarity(colors, clarity) {
-  const t = clarity / 100;
-  return interpolateColor(colors.dirty, colors.clean, t);
-}
-
-function shiftColor(color, amount) {
-  return interpolateColor(color, 'rgba(200, 220, 240, 0.35)', amount);
-}
-
-/** Parse an "rgba(r, g, b, a)" string into {r, g, b, a} */
 function parseRgba(str) {
   const m = str.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+))?\s*\)/);
   if (!m) return null;
   return { r: +m[1], g: +m[2], b: +m[3], a: m[4] !== undefined ? +m[4] : 1 };
 }
 
-/** Promisified setTimeout */
 function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-/**
- * Reset all animation state (reservoir, beaker, overlays).
- */
-function resetAnimation(scenario) {
+function resetAnimation() {
   const reservoir = document.getElementById('water-reservoir');
-  const beaker    = document.getElementById('beaker-water');
-  const bottle    = document.getElementById('bottle');
+  const beaker = document.getElementById('beaker-water');
+  const bottle = document.getElementById('bottle');
 
-  // Remove clog overlays
-  bottle.querySelectorAll('.clog-overlay').forEach(el => el.remove());
-
-  // Reset reservoir
+  bottle.querySelectorAll('.clog-overlay').forEach((el) => el.remove());
+  bottle.querySelectorAll('.bottle-flow-column, .bottle-filter-stream').forEach((el) => el.remove());
   reservoir.classList.remove('filtered');
   reservoir.style.transition = 'none';
   reservoir.style.background = '';
-  // Force reflow
   void reservoir.offsetHeight;
-  reservoir.className = 'water-reservoir';
-  if (scenario) reservoir.classList.add('scenario-' + scenario);
+  reservoir.className = 'water-reservoir scenario-A';
 
-  // Reset beaker
   beaker.style.transition = 'none';
   beaker.style.height = '0';
   beaker.style.background = 'transparent';
@@ -187,9 +175,9 @@ function resetAnimation(scenario) {
   beaker.style.transition = '';
 }
 
-/* ---------- Exports ---------- */
 window.Animation = {
   runFilterAnimation,
+  runTask1ParallelDemo,
   resetAnimation,
   WATER_COLORS,
   sleep,

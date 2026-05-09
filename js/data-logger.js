@@ -1,37 +1,30 @@
 /* ============================================================
-   data-logger.js – ClearWater Lab  Experiment Data Collection
-   ============================================================ */
+  data-logger.js – ClearWater Lab V2 Data Collection
+  ============================================================ */
 
 const DataLogger = (() => {
   let _data = {
     participantId: '',
-    group: '',              // 'ai' or 'control'
+    group: '',
     language: '',
     sessionStartTime: null,
     sessionEndTime: null,
-
-    preTest: {
-      answers: {},          // { q1: 'a', q2: 'c', ... }
-      score: 0,
-      maxScore: 0,
-      startTime: null,
-      endTime: null,
+    task1: {
+      rankingAttempts: [],
+      hintEvents: [],
+      correctOrder: [],
+      completedAt: null,
+      demoRuns: [],
     },
-
-    postTest: {
-      answers: {},
-      score: 0,
-      maxScore: 0,
-      startTime: null,
-      endTime: null,
+    codeLock: {
+      attempts: [],
+      unlockedAt: null,
     },
-
-    scenarios: {
-      A: { attempts: [], completed: false },
-      B: { attempts: [], completed: false },
+    task2: {
+      attempts: [],
+      completedAt: null,
     },
-
-    chatLogs: [],           // [{ timestamp, role, text }, ...]
+    chatLogs: [],
   };
 
   function init(participantId, group) {
@@ -39,58 +32,69 @@ const DataLogger = (() => {
     _data.group = group;
     _data.language = I18n.getLang();
     _data.sessionStartTime = new Date().toISOString();
+    _save();
   }
 
-  function logPreTest(answers, score, maxScore) {
-    _data.preTest.answers = { ...answers };
-    _data.preTest.score = score;
-    _data.preTest.maxScore = maxScore;
-    _data.preTest.endTime = new Date().toISOString();
+  function logTask1RankingAttempt(payload) {
+    _data.task1.rankingAttempts.push({
+      timestamp: new Date().toISOString(),
+      ...payload,
+    });
+    _save();
   }
 
-  function startPreTest() {
-    _data.preTest.startTime = new Date().toISOString();
+  function logTask1Hint(payload) {
+    _data.task1.hintEvents.push({
+      timestamp: new Date().toISOString(),
+      ...payload,
+    });
+    _save();
   }
 
-  function logPostTest(answers, score, maxScore) {
-    _data.postTest.answers = { ...answers };
-    _data.postTest.score = score;
-    _data.postTest.maxScore = maxScore;
-    _data.postTest.endTime = new Date().toISOString();
+  function markTask1RankingComplete(order) {
+    _data.task1.correctOrder = [...order];
+    _data.task1.completedAt = new Date().toISOString();
+    _save();
   }
 
-  function startPostTest() {
-    _data.postTest.startTime = new Date().toISOString();
+  function logTask1DemoRun(results) {
+    _data.task1.demoRuns.push({
+      timestamp: new Date().toISOString(),
+      results: [...results],
+    });
+    _save();
   }
 
-  function logAttempt(scenario, result) {
-    const attempt = {
+  function logCodeAttempt(code, success) {
+    _data.codeLock.attempts.push({
+      timestamp: new Date().toISOString(),
+      code,
+      success,
+    });
+    _save();
+  }
+
+  function markCodeUnlocked() {
+    _data.codeLock.unlockedAt = new Date().toISOString();
+    _save();
+  }
+
+  function logTask2Attempt(result) {
+    _data.task2.attempts.push({
       timestamp: new Date().toISOString(),
       layers: [...result.layers],
       turbidity: result.turbidity,
       clarity: result.clarity,
-      odor: result.odor,
-      odorLevel: result.odorLevel,
       flowTime: result.flowTime,
       clogged: result.clogged,
       score: result.score,
-    };
-
-    _data.scenarios[scenario].attempts.push(attempt);
+    });
     _save();
   }
 
-  function markScenarioComplete(scenario) {
-    _data.scenarios[scenario].completed = true;
+  function markTask2Complete() {
+    _data.task2.completedAt = new Date().toISOString();
     _save();
-  }
-
-  function getAttemptCount(scenario) {
-    return _data.scenarios[scenario].attempts.length;
-  }
-
-  function isScenarioComplete(scenario) {
-    return _data.scenarios[scenario].completed;
   }
 
   function logChatMessage(role, text) {
@@ -99,6 +103,7 @@ const DataLogger = (() => {
       role,
       text,
     });
+    _save();
   }
 
   function finishSession() {
@@ -112,14 +117,11 @@ const DataLogger = (() => {
 
   function getFlatData() {
     const d = getData();
-    const totalAttempts = d.scenarios.A.attempts.length + d.scenarios.B.attempts.length;
-    const bestScoreA = d.scenarios.A.attempts.length > 0
-      ? Math.max(...d.scenarios.A.attempts.map(a => a.score)) : 0;
-    const bestScoreB = d.scenarios.B.attempts.length > 0
-      ? Math.max(...d.scenarios.B.attempts.map(a => a.score)) : 0;
-
     const sessionDuration = d.sessionStartTime && d.sessionEndTime
       ? Math.round((new Date(d.sessionEndTime) - new Date(d.sessionStartTime)) / 1000)
+      : 0;
+    const task2Best = d.task2.attempts.length
+      ? Math.max(...d.task2.attempts.map((a) => a.score))
       : 0;
 
     return {
@@ -129,26 +131,20 @@ const DataLogger = (() => {
       sessionStartTime: d.sessionStartTime,
       sessionEndTime: d.sessionEndTime,
       sessionDurationSec: sessionDuration,
-
-      preTestScore: d.preTest.score,
-      preTestMaxScore: d.preTest.maxScore,
-      preTestAnswers: JSON.stringify(d.preTest.answers),
-
-      postTestScore: d.postTest.score,
-      postTestMaxScore: d.postTest.maxScore,
-      postTestAnswers: JSON.stringify(d.postTest.answers),
-
-      learningGain: d.postTest.score - d.preTest.score,
-
-      scenarioAAttempts: d.scenarios.A.attempts.length,
-      scenarioBAttempts: d.scenarios.B.attempts.length,
-      totalAttempts,
-      bestScoreA,
-      bestScoreB,
-
-      scenarioADetails: JSON.stringify(d.scenarios.A.attempts),
-      scenarioBDetails: JSON.stringify(d.scenarios.B.attempts),
-
+      task1Completed: !!d.task1.completedAt,
+      task1CompletedAt: d.task1.completedAt || '',
+      task1RankingAttempts: d.task1.rankingAttempts.length,
+      task1Hints: d.task1.hintEvents.length,
+      task1CorrectOrder: JSON.stringify(d.task1.correctOrder),
+      task1DemoRuns: d.task1.demoRuns.length,
+      codeAttempts: d.codeLock.attempts.length,
+      codeUnlocked: !!d.codeLock.unlockedAt,
+      codeUnlockedAt: d.codeLock.unlockedAt || '',
+      task2Attempts: d.task2.attempts.length,
+      task2BestScore: task2Best,
+      task2Completed: !!d.task2.completedAt,
+      task2CompletedAt: d.task2.completedAt || '',
+      task2Details: JSON.stringify(d.task2.attempts),
       chatLogCount: d.chatLogs.length,
       chatLogs: JSON.stringify(d.chatLogs),
     };
@@ -157,16 +153,16 @@ const DataLogger = (() => {
   function downloadCSV() {
     const flat = getFlatData();
     const headers = Object.keys(flat);
-    const values = headers.map(h => {
+    const values = headers.map((h) => {
       const v = String(flat[h]);
-      return '"' + v.replace(/"/g, '""') + '"';
+      return `"${v.replace(/"/g, '""')}"`;
     });
-    const csv = headers.join(',') + '\n' + values.join(',');
+    const csv = `${headers.join(',')}\n${values.join(',')}`;
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `clearwater_${_data.participantId}_${Date.now()}.csv`;
+    a.download = `clearwater_v2_${_data.participantId}_${Date.now()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -177,88 +173,35 @@ const DataLogger = (() => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `clearwater_${_data.participantId}_${Date.now()}.json`;
+    a.download = `clearwater_v2_${_data.participantId}_${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
-  /* Auto-save to localStorage as backup */
   function _save() {
     try {
-      localStorage.setItem('clearwater_data_' + _data.participantId, JSON.stringify(_data));
-    } catch (e) { /* ignore */ }
-  }
-
-  /**
-   * Submit data to a Google Form.
-   * RESEARCHER: Replace GOOGLE_FORM_URL and field entry IDs with your own.
-   * See README for setup instructions.
-   */
-  async function submitToGoogleForm() {
-    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfM5ofopfcZUaJ7QLDrAdOuORKfI7MeiV0HgS2zR4FGZy9dQg/formResponse';
-
-    if (GOOGLE_FORM_URL === 'YOUR_GOOGLE_FORM_URL_HERE') {
-      console.warn('[DataLogger] Google Form URL not configured. Skipping submission.');
-      return false;
-    }
-
-    const flat = getFlatData();
-
-    const formData = new URLSearchParams();
-    formData.append('entry.103577797',  flat.participantId);
-    formData.append('entry.871655434',  flat.group);
-    formData.append('entry.130534101',  flat.language);
-    formData.append('entry.1082703810', flat.sessionStartTime);
-    formData.append('entry.381375574',  flat.sessionEndTime);
-    formData.append('entry.1156566626', String(flat.sessionDurationSec));
-    formData.append('entry.704301771',  String(flat.preTestScore));
-    formData.append('entry.19248783',   String(flat.preTestMaxScore));
-    formData.append('entry.1183941190', flat.preTestAnswers);
-    formData.append('entry.1244706623', String(flat.postTestScore));
-    formData.append('entry.124527542',  String(flat.postTestMaxScore));
-    formData.append('entry.1632967581', flat.postTestAnswers);
-    formData.append('entry.101429895',  String(flat.learningGain));
-    formData.append('entry.753595185',  String(flat.scenarioAAttempts));
-    formData.append('entry.1032364199', String(flat.scenarioBAttempts));
-    formData.append('entry.1925892085', String(flat.totalAttempts));
-    formData.append('entry.91880466',   String(flat.bestScoreA));
-    formData.append('entry.1380014986', String(flat.bestScoreB));
-    formData.append('entry.889834511',  flat.scenarioADetails);
-    formData.append('entry.1878177482', flat.scenarioBDetails);
-    formData.append('entry.1604191968', String(flat.chatLogCount));
-    formData.append('entry.1758189449', flat.chatLogs);
-
-    try {
-      await fetch(GOOGLE_FORM_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData,
-      });
-      console.log('[DataLogger] Google Form submitted.');
-      return true;
+      localStorage.setItem(`clearwater_v2_data_${_data.participantId}`, JSON.stringify(_data));
     } catch (e) {
-      console.error('[DataLogger] Google Form submission failed:', e);
-      return false;
+      /* ignore */
     }
   }
 
   return {
     init,
-    startPreTest,
-    logPreTest,
-    startPostTest,
-    logPostTest,
-    logAttempt,
-    markScenarioComplete,
-    getAttemptCount,
-    isScenarioComplete,
+    logTask1RankingAttempt,
+    logTask1Hint,
+    markTask1RankingComplete,
+    logTask1DemoRun,
+    logCodeAttempt,
+    markCodeUnlocked,
+    logTask2Attempt,
+    markTask2Complete,
     logChatMessage,
     finishSession,
     getData,
     getFlatData,
     downloadCSV,
     downloadJSON,
-    submitToGoogleForm,
   };
 })();
 

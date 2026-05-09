@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClearWater Lab</title>
+  <title>ClearWater Lab V2</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css" />
@@ -19,7 +19,7 @@
   <nav id="top-nav">
     <span id="nav-title" class="nav-brand" data-i18n="heroTitle">ClearWater Lab</span>
     <div class="nav-right">
-      <button id="back-btn" class="btn btn-ghost hidden" data-i18n="backToScenarios">← 返回選擇場景</button>
+      <button id="back-btn" class="btn btn-ghost hidden" data-i18n="backToTask1">← 返回任務 1</button>
       <button id="lang-toggle" class="btn btn-outline" onclick="I18n.toggleLang()">EN</button>
     </div>
   </nav>
@@ -41,37 +41,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       SCREEN: CONSENT
-       ============================================================ -->
-  <section id="consent-screen" class="screen">
-    <div class="experiment-card centered-card">
-      <h2 data-i18n="consentTitle">參與同意書</h2>
-      <div class="consent-body" id="consent-body"></div>
-      <label class="checkbox-label">
-        <input type="checkbox" id="consent-checkbox" />
-        <span data-i18n="consentAgree">我已閱讀並同意參加本實驗</span>
-      </label>
-      <button id="consent-btn" class="btn btn-primary btn-lg btn-full" data-i18n="consentBtn">繼續</button>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       SCREEN: PRE-TEST
-       ============================================================ -->
-  <section id="pretest-screen" class="screen">
-    <div class="experiment-card wide-card">
-      <h2 data-i18n="pretestTitle">前測問卷</h2>
-      <p class="test-desc" data-i18n="pretestDesc">請根據你目前的知識回答以下問題，答不出來也沒關係。</p>
-      <div id="pretest-questions" class="test-questions"></div>
-      <p id="pretest-error" class="form-error hidden" data-i18n="testIncomplete">請回答所有問題後再提交。</p>
-      <button id="pretest-submit" class="btn btn-primary btn-lg btn-full" data-i18n="submitTest">提交問卷</button>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       SCREEN: INSTRUCTIONS
-       ============================================================ -->
+  <!-- SCREEN: INSTRUCTIONS -->
   <section id="instructions-screen" class="screen">
     <div class="experiment-card centered-card">
       <div class="experiment-icon">🧪</div>
@@ -81,75 +51,141 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       SCREEN 1 – LANDING / SCENARIO SELECTION
-       ============================================================ -->
-  <section id="landing-screen" class="screen">
-    <div class="hero">
-      <h1 data-i18n="heroTitle">ClearWater Lab</h1>
-      <p class="subtitle" data-i18n="heroSubtitle">探索物理過濾的科學原理</p>
-    </div>
+  <!-- SCREEN: TASK 1 -->
+  <section id="task1-screen" class="screen">
+    <div class="experiment-card wide-card">
+      <h2 data-i18n="task1Title">任務 1：濾材孔隙大小排序</h2>
+      <p class="test-desc" data-i18n="task1Subtitle">請觀察材料特性，將濾材依孔隙大小由大到小排列。</p>
+      <div id="ranking-feedback" class="ranking-feedback" data-i18n="rankingFeedbackDefault">把濾材拖曳到下方排序區。</div>
 
-    <h2 class="section-heading" data-i18n="chooseScenario">選擇實驗場景</h2>
+      <div class="task1-layout">
+        <aside class="task1-inventory">
+          <h3 data-i18n="materialsTitle">材料庫</h3>
+          <div class="material-card task1-material" draggable="true" data-material="gravel">
+            <div class="material-swatch swatch-gravel"></div>
+            <div class="material-info">
+              <strong data-i18n="gravel">大石子</strong>
+              <small data-i18n="gravelDesc">攔截最大顆粒雜質</small>
+            </div>
+          </div>
+          <div class="material-card task1-material" draggable="true" data-material="pebble">
+            <div class="material-swatch swatch-pebble"></div>
+            <div class="material-info">
+              <strong data-i18n="pebble">小石子</strong>
+              <small data-i18n="pebbleDesc">過濾中大型顆粒</small>
+            </div>
+          </div>
+          <div class="material-card task1-material" draggable="true" data-material="sand">
+            <div class="material-swatch swatch-sand"></div>
+            <div class="material-info">
+              <strong data-i18n="sand">細砂</strong>
+              <small data-i18n="sandDesc">過濾細小懸浮顆粒</small>
+            </div>
+          </div>
+          <div class="material-card task1-material" draggable="true" data-material="cotton">
+            <div class="material-swatch swatch-cotton"></div>
+            <div class="material-info">
+              <strong data-i18n="cotton">棉花</strong>
+              <small data-i18n="cottonDesc">最後攔截微細顆粒</small>
+            </div>
+          </div>
+        </aside>
 
-    <div class="scenario-grid">
-      <!-- Scenario A -->
-      <div class="scenario-card" data-scenario="A" tabindex="0" role="button">
-        <div class="scenario-icon scenario-icon--river">
-          <!-- Inline SVG: muddy water icon -->
-          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="20" width="60" height="45" rx="8" fill="#8D6E63" opacity="0.25"/>
-            <path d="M15 40 Q25 35 35 40 T55 40 T75 40" stroke="#795548" stroke-width="3" fill="none"/>
-            <path d="M15 50 Q25 45 35 50 T55 50 T75 50" stroke="#6D4C41" stroke-width="2" fill="none"/>
-            <circle cx="28" cy="32" r="3" fill="#4E342E"/>
-            <circle cx="52" cy="28" r="2" fill="#4E342E"/>
-            <path d="M44 22 L47 16 L50 22 Z" fill="#388E3C"/>
-          </svg>
-        </div>
-        <h3 data-i18n="scenarioATitle">泥濘的河水</h3>
-        <p class="scenario-desc" data-i18n="scenarioADesc">含有大量可見泥沙、碎葉，渾濁度極高。
-目標：降低濁度。</p>
-        <button class="btn btn-primary" data-i18n="startTask">開始任務</button>
-      </div>
-
-      <!-- Scenario B -->
-      <div class="scenario-card" data-scenario="B" tabindex="0" role="button">
-        <div class="scenario-icon scenario-icon--pond">
-          <!-- Inline SVG: smelly pond icon -->
-          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="20" width="60" height="45" rx="8" fill="#66BB6A" opacity="0.25"/>
-            <path d="M15 40 Q25 35 35 40 T55 40 T75 40" stroke="#43A047" stroke-width="3" fill="none"/>
-            <path d="M15 50 Q25 45 35 50 T55 50 T75 50" stroke="#2E7D32" stroke-width="2" fill="none"/>
-            <path d="M30 18 Q32 10 34 18" stroke="#BDBDBD" stroke-width="1.5" fill="none"/>
-            <path d="M38 16 Q40 8 42 16" stroke="#BDBDBD" stroke-width="1.5" fill="none"/>
-            <path d="M46 19 Q48 11 50 19" stroke="#BDBDBD" stroke-width="1.5" fill="none"/>
-          </svg>
-        </div>
-        <h3 data-i18n="scenarioBTitle">發臭的景觀池水</h3>
-        <p class="scenario-desc" data-i18n="scenarioBDesc">水質帶綠（藻類），有明顯的腐敗腥臭味。
-目標：降低濁度並去除異味。</p>
-        <button class="btn btn-primary" data-i18n="startTask">開始任務</button>
+        <main class="task1-board">
+          <h3 data-i18n="rankingBoardTitle">排序區（由左到右）</h3>
+          <ol id="ranking-slots" class="ranking-slots">
+            <li class="ranking-slot" data-index="0"></li>
+            <li class="ranking-slot" data-index="1"></li>
+            <li class="ranking-slot" data-index="2"></li>
+            <li class="ranking-slot" data-index="3"></li>
+          </ol>
+          <p id="task1-ready" class="ranking-ready hidden" data-i18n="rankingReady">排序正確！可開始平行濾水展示。</p>
+          <div class="task1-actions">
+            <button id="task1-confirm-btn" class="btn btn-primary" disabled data-i18n="startParallelDemo">確認次序</button>
+            <button id="task1-clear-btn" class="btn btn-outline" data-i18n="task1ClearAll">清除排序</button>
+            <button id="task1-demo-btn" class="btn btn-outline hidden" data-i18n="proceedCodeLock">下一頁</button>
+          </div>
+        </main>
       </div>
     </div>
   </section>
 
-  <!-- ============================================================
-       SCREEN 2 – VIRTUAL LAB
-       ============================================================ -->
+  <!-- SCREEN: TASK 1 PARALLEL DEMO -->
+  <section id="task1-demo-screen" class="screen">
+    <div class="experiment-card wide-card">
+      <h2 data-i18n="task1DemoTitle">任務 1：平行濾水展示</h2>
+      <p class="test-desc" data-i18n="task1DemoDesc">四種濾材會同時進行濾水，完成時間不同，因此結果卡會依序出現。</p>
+      <div id="task1-filters" class="task1-filters-grid hidden">
+        <div class="mini-filter" data-material="gravel">
+          <div class="mini-filter-name">Gravel</div>
+          <div class="mini-filter-body">
+            <div class="mini-filter-reservoir"></div>
+            <div class="mini-filter-media layer-gravel"></div>
+            <div class="mini-filter-stream"></div>
+            <div class="mini-filter-beaker"><div class="mini-water"></div></div>
+          </div>
+          <div class="mini-score hidden"></div>
+        </div>
+        <div class="mini-filter" data-material="pebble">
+          <div class="mini-filter-name">Pebble</div>
+          <div class="mini-filter-body">
+            <div class="mini-filter-reservoir"></div>
+            <div class="mini-filter-media layer-pebble"></div>
+            <div class="mini-filter-stream"></div>
+            <div class="mini-filter-beaker"><div class="mini-water"></div></div>
+          </div>
+          <div class="mini-score hidden"></div>
+        </div>
+        <div class="mini-filter" data-material="sand">
+          <div class="mini-filter-name">Sand</div>
+          <div class="mini-filter-body">
+            <div class="mini-filter-reservoir"></div>
+            <div class="mini-filter-media layer-sand"></div>
+            <div class="mini-filter-stream"></div>
+            <div class="mini-filter-beaker"><div class="mini-water"></div></div>
+          </div>
+          <div class="mini-score hidden"></div>
+        </div>
+        <div class="mini-filter" data-material="cotton">
+          <div class="mini-filter-name">Cotton</div>
+          <div class="mini-filter-body">
+            <div class="mini-filter-reservoir"></div>
+            <div class="mini-filter-media layer-cotton"></div>
+            <div class="mini-filter-stream"></div>
+            <div class="mini-filter-beaker"><div class="mini-water"></div></div>
+          </div>
+          <div class="mini-score hidden"></div>
+        </div>
+      </div>
+      <div class="task1-actions task1-demo-actions">
+            <button id="task1-code-btn" class="btn btn-primary hidden" data-i18n="proceedCodeLock">下一頁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN: CODE LOCK -->
+  <section id="code-screen" class="screen">
+    <div class="experiment-card centered-card">
+      <h2 data-i18n="codeLockTitle">任務解鎖</h2>
+      <p class="experiment-subtitle" data-i18n="codeLockDesc">請輸入正確代碼以進入任務 2。</p>
+      <div class="form-group">
+        <label for="code-lock-input" data-i18n="codeLockPlaceholder">輸入代碼</label>
+        <input id="code-lock-input" class="form-input" type="text" data-i18n-placeholder="codeLockPlaceholder" />
+      </div>
+      <p id="code-lock-error" class="form-error hidden" data-i18n="codeLockWrong">代碼錯誤，請再試一次。</p>
+      <button id="code-lock-btn" class="btn btn-primary btn-lg btn-full" data-i18n="codeLockBtn">解鎖任務 2</button>
+    </div>
+  </section>
+
+  <!-- SCREEN: TASK 2 -->
   <section id="lab-screen" class="screen">
-    <!-- Task header -->
     <div id="task-header" class="task-header">
       <span class="task-label" data-i18n="taskLabel">當前任務</span>
-      <span id="task-name" class="task-name"></span>
-      <div id="scenario-progress" class="scenario-progress">
-        <span class="progress-label" data-i18n="progressLabel">實驗進度</span>
-        <span id="progress-a" class="progress-item">A: 0</span>
-        <span id="progress-b" class="progress-item">B: 0</span>
-      </div>
+      <span id="task-name" class="task-name" data-i18n="task2Title">任務 2：泥濘的河水</span>
+      <p class="experiment-subtitle" data-i18n="task2Desc">目標：提升清澈度並維持合理流速。</p>
     </div>
 
     <div class="lab-layout">
-      <!-- LEFT: Material Sidebar -->
       <aside id="material-sidebar" class="material-sidebar">
         <h3 data-i18n="materialsTitle">濾材材料庫</h3>
 
@@ -157,7 +193,15 @@
           <div class="material-swatch swatch-gravel"></div>
           <div class="material-info">
             <strong data-i18n="gravel">大石子</strong>
-            <small data-i18n="gravelDesc">攔截大型樹葉與碎石</small>
+            <small data-i18n="gravelDesc">攔截最大顆粒雜質</small>
+          </div>
+        </div>
+
+        <div class="material-card" draggable="true" data-material="pebble">
+          <div class="material-swatch swatch-pebble"></div>
+          <div class="material-info">
+            <strong data-i18n="pebble">小石子</strong>
+            <small data-i18n="pebbleDesc">過濾中大型顆粒</small>
           </div>
         </div>
 
@@ -165,15 +209,7 @@
           <div class="material-swatch swatch-sand"></div>
           <div class="material-info">
             <strong data-i18n="sand">細砂</strong>
-            <small data-i18n="sandDesc">過濾中小型懸浮泥沙</small>
-          </div>
-        </div>
-
-        <div class="material-card" draggable="true" data-material="carbon">
-          <div class="material-swatch swatch-carbon"></div>
-          <div class="material-info">
-            <strong data-i18n="carbon">活性碳</strong>
-            <small data-i18n="carbonDesc">物理吸附色素與臭味分子</small>
+            <small data-i18n="sandDesc">過濾細小懸浮顆粒</small>
           </div>
         </div>
 
@@ -181,61 +217,44 @@
           <div class="material-swatch swatch-cotton"></div>
           <div class="material-info">
             <strong data-i18n="cotton">棉花</strong>
-            <small data-i18n="cottonDesc">防止細砂流失並捕捉微粒</small>
+            <small data-i18n="cottonDesc">最後攔截微細顆粒</small>
           </div>
         </div>
       </aside>
 
-      <!-- CENTER: Filtration Bottle -->
       <main class="bottle-area">
         <div id="bottle" class="bottle">
-          <!-- Dirty water reservoir at top -->
           <div id="water-reservoir" class="water-reservoir"></div>
-          <!-- Layers will be injected here -->
           <div id="bottle-layers" class="bottle-layers">
             <div class="placeholder-text" data-i18n="bottlePlaceholder">將濾材拖曳至此處</div>
           </div>
-          <!-- Output spout -->
           <div id="water-output" class="water-output"></div>
         </div>
 
-        <!-- Beaker underneath -->
         <div id="beaker" class="beaker">
           <div id="beaker-water" class="beaker-water"></div>
         </div>
 
-        <!-- Action buttons -->
         <div class="bottle-actions">
           <button id="btn-filter" class="btn btn-primary btn-lg" data-i18n="startFilter">開始過濾</button>
           <button id="btn-clear" class="btn btn-outline" data-i18n="clearAll">清除全部</button>
+          <button id="btn-finish-task2" class="btn btn-outline hidden" data-i18n="finishTask2">完成任務 2</button>
         </div>
+        <p id="task2-trial-status" class="task2-trial-status"></p>
       </main>
 
-      <!-- RIGHT: Dashboard (hidden until filtering done) -->
       <aside id="dashboard" class="dashboard hidden">
-        <h3 data-i18n="dashboardTitle">數據儀表板</h3>
-
-        <!-- Turbidity -->
+        <h3 data-i18n="dashboardTitle">結果儀表板</h3>
         <div class="gauge-group">
-          <label data-i18n="turbidityLabel">濁度（清澈程度）</label>
+          <label data-i18n="turbidityLabel">清澈度</label>
           <div class="gauge-bar">
             <div id="turbidity-fill" class="gauge-fill gauge-fill--turbidity" style="width:0%"></div>
           </div>
           <span id="turbidity-value" class="gauge-value">0%</span>
         </div>
 
-        <!-- Odor -->
         <div class="gauge-group">
-          <label data-i18n="odorLabel">氣味偵測器</label>
-          <div id="odor-display" class="odor-display">
-            <span class="odor-icon">👃</span>
-            <span id="odor-value" class="odor-value">—</span>
-          </div>
-        </div>
-
-        <!-- Flow speed -->
-        <div class="gauge-group">
-          <label data-i18n="flowLabel">流速監控</label>
+          <label data-i18n="speedLabel">流速</label>
           <div class="flow-display">
             <span id="flow-value" class="flow-value">—</span>
           </div>
@@ -246,22 +265,7 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       SCREEN: POST-TEST
-       ============================================================ -->
-  <section id="posttest-screen" class="screen">
-    <div class="experiment-card wide-card">
-      <h2 data-i18n="posttestTitle">後測問卷</h2>
-      <p class="test-desc" data-i18n="posttestDesc">請根據你在實驗中學到的知識回答以下問題。</p>
-      <div id="posttest-questions" class="test-questions"></div>
-      <p id="posttest-error" class="form-error hidden" data-i18n="testIncomplete">請回答所有問題後再提交。</p>
-      <button id="posttest-submit" class="btn btn-primary btn-lg btn-full" data-i18n="submitTest">提交問卷</button>
-    </div>
-  </section>
-
-  <!-- ============================================================
-       SCREEN: COMPLETION
-       ============================================================ -->
+  <!-- SCREEN: COMPLETION -->
   <section id="completion-screen" class="screen">
     <div class="experiment-card centered-card">
       <div class="experiment-icon">🎉</div>
@@ -277,12 +281,12 @@
           <span class="summary-value" id="completion-group-val"></span>
         </div>
         <div class="summary-row">
-          <span class="summary-label" data-i18n="completionPreScore">前測分數</span>
-          <span class="summary-value" id="completion-pre-val"></span>
+          <span class="summary-label" data-i18n="completionTask1">任務 1</span>
+          <span class="summary-value" id="completion-task1-val"></span>
         </div>
         <div class="summary-row">
-          <span class="summary-label" data-i18n="completionPostScore">後測分數</span>
-          <span class="summary-value" id="completion-post-val"></span>
+          <span class="summary-label" data-i18n="completionTask2">任務 2</span>
+          <span class="summary-value" id="completion-task2-val"></span>
         </div>
       </div>
       <button id="download-data-btn" class="btn btn-outline btn-lg btn-full" data-i18n="downloadData">下載實驗數據</button>
@@ -298,7 +302,6 @@
        SCRIPTS (order matters)
        ============================================================ -->
   <script src="js/i18n.js"></script>
-  <script src="js/test-questions.js"></script>
   <script src="js/data-logger.js"></script>
   <script src="js/scoring.js"></script>
   <script src="js/animation.js"></script>

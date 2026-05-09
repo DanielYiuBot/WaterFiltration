@@ -1,93 +1,71 @@
 /* ============================================================
-   chatbot.js – Dr. H2O  Web Component + OpenAI Integration
-   ============================================================ */
+  chatbot.js – 水博士 for V2 Tasks
+  ============================================================ */
 
 const OPENAI_MODEL = 'gpt-5-nano';
-const OPENAI_URL   = '/api/chat';   // Vercel serverless function (API key stored server-side)
+const OPENAI_URL = '/api/chat';
 
-/* ---------- System prompt builder ---------- */
-function buildSystemPrompt(lang) {
-  const langInstr = lang === 'zh'
-    ? '請用繁體中文、親切簡短的口吻回覆。'
-    : 'Reply in English, friendly and concise.';
+function buildSystemPrompt() {
+  return `你是「水博士」，一位專門幫助香港小四學生學習「濾水」的教育聊天機械人。
 
-  return `你是 Dr. H₂O，一位專注於物理濾水的科學老師。${langInstr}
+核心規則（必須嚴格遵守）：
+1. 無論學生使用中文、英文或其他語言提問，你都必須永遠使用繁體中文回答。
+2. 你的對象是小四學生，所以語氣要像一位友善、有耐心、鼓勵學生思考的老師；用簡單、清楚、溫暖的句子回答。
+3. 可以少量使用合適 emoji 令語氣更親切，例如 💧、🔍、👍、🌟；但不要每句都用，通常每次回覆 0 至 2 個 emoji 已足夠。
+4. 避免艱深術語；如需使用科學詞語，必須用小四學生容易明白的例子解釋。
+5. 你只能討論與「濾水」有關的內容，包括：濾材、孔隙大小、濁度、清澈度、水流速度、堵塞、濾材排序、泥濘河水、物理過濾、實驗結果分析。
+6. 如果學生提出任何與濾水無關的要求（例如遊戲、故事、功課答案、閒聊、翻譯、編程、天氣、個人問題等），不要回答該要求；請溫和地把話題帶回濾水。
+7. 不要提及發臭池塘水、氣味偵測器或活性碳，因為這些已不是本活動內容。
+8. 回答一般保持 2 至 5 句；如學生需要步驟，可以用簡短條列。
 
-你的職責：
-1. 檢視學生的實驗數據（濾材順序、場景、水質結果）。
-2. 給出 0-100 的評分（已由系統計算，直接引用即可）。
-3. 根據以下規則給出建議：
-   - 如果大石子（Gravel）沒放在最上層，提醒大顆粒會堵塞下方細砂。
-   - 如果沒用活性碳（Activated Carbon）處理池塘水（場景 B），提醒無法去味。
-   - 如果棉花（Cotton）沒放在最底層，提醒細砂可能流失。
-   - 如果發生堵塞（clogged），解釋細砂或棉花放在頂部會阻擋水流。
-   - 如果順序完美，給予鼓勵。
-4. 回覆控制在 3-5 句以內。
-5. 學生後續提問時，根據物理過濾原理回答，保持友善教學風格。`;
+當你分析實驗結果時，請重點提示：
+- 較大孔隙的材料（石頭、粗砂粒）較適合先攔截大顆粒。
+- 較小孔隙的材料（細砂粒、棉花）較適合放後面，幫助濾走細小泥沙。
+- 如果水流太慢或堵塞，引導學生思考是否太細的材料放得太前。
+- 如果水仍然混濁，引導學生比較不同濾材的孔隙大小和排列次序。`;
 }
 
 function buildUserPayload(result) {
-  const layerNames = result.layers.map(m => {
-    const map = { gravel: '大石子/Gravel', sand: '細砂/Sand', carbon: '活性碳/Carbon', cotton: '棉花/Cotton' };
-    return map[m] || m;
-  });
-
-  return `以下是學生的實驗數據：
-場景: ${result.scenario === 'A' ? '泥濘的河水 (Muddy River)' : '發臭的景觀池水 (Smelly Pond)'}
-濾材順序 (由上到下): ${layerNames.join(' → ')}
+  const map = { gravel: '石頭/Gravel', pebble: '粗砂粒/Pebble', sand: '細砂粒/Sand', cotton: '棉花/Cotton' };
+  const layerNames = (result.layers || []).map((m) => map[m] || m);
+  return `學生任務 2 過濾結果：
+濾材順序(上到下): ${layerNames.join(' -> ')}
 清澈度: ${result.clarity}%
-氣味等級: ${result.odorLevel}
-過濾時間: ${result.clogged ? '堵塞 (clogged)' : result.flowTime + '秒'}
-系統評分: ${result.score}/100
-
-請給出你的分析與建議。`;
+流速: ${result.clogged ? 'clogged' : result.flowTime + 's'}
+分數: ${result.score}/100
+請給 3-5 句建議。`;
 }
 
-/* ============================================================
-   Dr. H2O Custom Element
-   ============================================================ */
 class DrH2O extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this._open = false;
-    this._messages = [];         // { role: 'bot'|'user', text }
-    this._conversationHistory = []; // OpenAI messages array
+    this._messages = [];
+    this._conversationHistory = [];
     this._lastResult = null;
     this._busy = false;
-
     this.render();
     this.setupEvents();
   }
 
-  /* ---- Render (Shadow DOM) ---- */
   render() {
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="css/chatbot.css" />
-
-      <!-- Floating Action Button -->
-      <button class="drh2o-fab" id="fab" aria-label="Dr. H₂O">
+      <button class="drh2o-fab" id="fab" aria-label="水博士">
         <span class="notif-dot" id="notif"></span>
         <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Water drop body -->
           <path d="M16 4 C16 4 6 16 6 21 C6 26.5 10.5 29 16 29 C21.5 29 26 26.5 26 21 C26 16 16 4 16 4Z"
                 fill="white" fill-opacity="0.9" stroke="white" stroke-width="0.5"/>
-          <!-- Glasses -->
           <circle cx="12.5" cy="19" r="3" stroke="#039BE5" stroke-width="1.2" fill="none"/>
           <circle cx="19.5" cy="19" r="3" stroke="#039BE5" stroke-width="1.2" fill="none"/>
           <line x1="15.5" y1="19" x2="16.5" y2="19" stroke="#039BE5" stroke-width="1"/>
-          <!-- Smile -->
           <path d="M13 23.5 Q16 25.5 19 23.5" stroke="#039BE5" stroke-width="1" fill="none" stroke-linecap="round"/>
         </svg>
       </button>
-
-      <!-- Chat Panel -->
       <div class="drh2o-panel" id="panel">
         <div class="drh2o-header">
-          <span class="drh2o-header-title">
-            <span class="avatar">💧</span>
-            Dr. H₂O
-          </span>
+          <span class="drh2o-header-title"><span class="avatar">💧</span>水博士</span>
           <button class="drh2o-close" id="close-btn" aria-label="Close">&times;</button>
         </div>
         <div class="drh2o-messages" id="messages"></div>
@@ -100,25 +78,22 @@ class DrH2O extends HTMLElement {
   }
 
   connectedCallback() {
-    // Make globally accessible
     window.DrH2OElement = this;
     this.updatePlaceholders();
   }
 
   updatePlaceholders() {
-    const input   = this.shadowRoot.getElementById('input');
+    const input = this.shadowRoot.getElementById('input');
     const sendBtn = this.shadowRoot.getElementById('send-btn');
-    if (input)   input.placeholder = I18n.t('askPlaceholder');
+    if (input) input.placeholder = I18n.t('askPlaceholder');
     if (sendBtn) sendBtn.textContent = I18n.t('sendBtn');
   }
 
-  /* ---- Events ---- */
   setupEvents() {
-    const fab      = this.shadowRoot.getElementById('fab');
+    const fab = this.shadowRoot.getElementById('fab');
     const closeBtn = this.shadowRoot.getElementById('close-btn');
-    const sendBtn  = this.shadowRoot.getElementById('send-btn');
-    const input    = this.shadowRoot.getElementById('input');
-
+    const sendBtn = this.shadowRoot.getElementById('send-btn');
+    const input = this.shadowRoot.getElementById('input');
     fab.addEventListener('click', () => this.toggle());
     closeBtn.addEventListener('click', () => this.collapse());
     sendBtn.addEventListener('click', () => this.sendUserMessage());
@@ -127,120 +102,76 @@ class DrH2O extends HTMLElement {
     });
   }
 
-  /* ---- Expand / Collapse ---- */
-  toggle() {
-    this._open ? this.collapse() : this.expand();
-  }
-
+  toggle() { this._open ? this.collapse() : this.expand(); }
   expand() {
     this._open = true;
     this.shadowRoot.getElementById('panel').classList.add('open');
-    // Clear notification
     this.shadowRoot.getElementById('notif').classList.remove('visible');
     this.shadowRoot.getElementById('fab').classList.remove('shake');
     this.updatePlaceholders();
   }
-
   collapse() {
     this._open = false;
     this.shadowRoot.getElementById('panel').classList.remove('open');
   }
 
-  /* ---- Called by Lab when filtering completes ---- */
   onFilterComplete(result) {
     this._lastResult = result;
-
-    // Reset conversation for new experiment
     this._messages = [];
     this._conversationHistory = [];
-
-    // Show notification
     const notif = this.shadowRoot.getElementById('notif');
-    const fab   = this.shadowRoot.getElementById('fab');
+    const fab = this.shadowRoot.getElementById('fab');
     notif.classList.add('visible');
     fab.classList.add('shake');
-
-    // Auto-generate analysis
     this.generateAnalysis(result);
   }
 
-  /* ---- AI: Generate initial analysis ---- */
   async generateAnalysis(result) {
-    const lang = I18n.getLang();
-    const systemMsg = buildSystemPrompt(lang);
-    const userMsg   = buildUserPayload(result);
-
     this._conversationHistory = [
-      { role: 'system', content: systemMsg },
-      { role: 'user',   content: userMsg },
+      { role: 'system', content: buildSystemPrompt() },
+      { role: 'user', content: buildUserPayload(result) },
     ];
-
-    /* ---- Debug logging ---- */
-    console.group('%c[Dr. H2O] Prompt', 'color:#E91E63;font-weight:bold');
-    console.log('%cSystem Prompt:', 'font-weight:bold');
-    console.log(systemMsg);
-    console.log('%cUser Payload:', 'font-weight:bold');
-    console.log(userMsg);
-    console.groupEnd();
-
-    // Add thinking indicator
     this.addMessage('bot', I18n.t('thinking'), true);
     this.renderMessages();
-
     const reply = await this.callOpenAI(this._conversationHistory);
-
-    // Remove thinking, add real reply
     this._messages.pop();
     this.addMessage('bot', reply);
     this._conversationHistory.push({ role: 'assistant', content: reply });
     this.renderMessages();
-
-    console.group('%c[Dr. H2O] AI Reply', 'color:#4CAF50;font-weight:bold');
-    console.log(reply);
-    console.groupEnd();
   }
 
-  /* ---- AI: Handle user follow-up questions ---- */
   async sendUserMessage() {
     const input = this.shadowRoot.getElementById('input');
     const text = input.value.trim();
     if (!text || this._busy) return;
-
     input.value = '';
     this.addMessage('user', text);
     this.renderMessages();
-
+    this.ensureSystemPrompt();
     this._conversationHistory.push({ role: 'user', content: text });
-
-    // Thinking
     this.addMessage('bot', I18n.t('thinking'), true);
     this.renderMessages();
-
     const reply = await this.callOpenAI(this._conversationHistory);
-
-    this._messages.pop(); // remove thinking
+    this._messages.pop();
     this.addMessage('bot', reply);
     this._conversationHistory.push({ role: 'assistant', content: reply });
     this.renderMessages();
   }
 
-  /* ---- OpenAI API Call (via Vercel serverless proxy) ---- */
   async callOpenAI(messages) {
     this._busy = true;
     this.shadowRoot.getElementById('send-btn').disabled = true;
-
     try {
       const res = await fetch(OPENAI_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: OPENAI_MODEL,
-          messages: messages,
-          max_tokens: 500,
+          messages,
+          max_tokens: 400,
           temperature: 0.7,
         }),
       });
-
       if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
       return data.choices?.[0]?.message?.content || I18n.t('errorAI');
@@ -253,95 +184,34 @@ class DrH2O extends HTMLElement {
     }
   }
 
-  /**
-   * Offline fallback analysis when no API key is set.
-   * Provides rule-based feedback matching the system prompt logic.
-   */
+  ensureSystemPrompt() {
+    const hasSystemPrompt = this._conversationHistory.some((message) => message.role === 'system');
+    if (!hasSystemPrompt) {
+      this._conversationHistory.unshift({ role: 'system', content: buildSystemPrompt() });
+    }
+  }
+
   fallbackAnalysis() {
     const r = this._lastResult;
     if (!r) return I18n.t('errorAI');
-
-    const lang = I18n.getLang();
     const lines = [];
-
-    // Score
-    if (lang === 'zh') {
-      lines.push(`📊 實驗評分：${r.score}/100`);
-    } else {
-      lines.push(`📊 Experiment Score: ${r.score}/100`);
-    }
-
-    // Clog check
+    lines.push(`評分：${r.score}/100`);
     if (r.clogged) {
-      lines.push(lang === 'zh'
-        ? '⚠️ 你的濾水器堵塞了！棉花放在最上方，纖維太細會被髒水直接堵住。試試把大石子放在最上面吧。'
-        : '⚠️ Your filter is clogged! Cotton on top gets saturated instantly by dirty water. Try putting gravel on top.');
+      lines.push('你的濾材堵塞了，避免把棉花放在最上層。');
       return lines.join('\n\n');
     }
-
-    // Too few materials hint
-    const uniqueMats = new Set(r.layers);
-    const idealCount = r.scenario === 'B' ? 4 : 3;
-    if (uniqueMats.size < idealCount) {
-      lines.push(lang === 'zh'
-        ? `🧪 你目前只用了 ${uniqueMats.size} 種濾材。試試多加幾層，不同材料各有不同的過濾效果喔！`
-        : `🧪 You used only ${uniqueMats.size} material(s). Try adding more – each material filters differently!`);
+    if (r.layers[0] !== 'gravel' && r.layers.includes('gravel')) {
+      lines.push('建議把石頭放在上層先擋大顆粒。');
     }
-
-    // Sand on top warning (not clogged, but suboptimal)
-    if (r.layers.length >= 2 && r.layers[0] === 'sand') {
-      lines.push(lang === 'zh'
-        ? '⚠️ 細砂放在最上方會讓水流變慢。大石子比較適合放在最上層，先攔截大顆粒。'
-        : '⚠️ Sand on top slows water flow significantly. Gravel works better as the first layer to catch large debris.');
-    }
-
-    // Order check: gravel should be on top
-    if (r.layers.length > 0 && r.layers[0] !== 'gravel' && r.layers.includes('gravel')) {
-      lines.push(lang === 'zh'
-        ? '💡 大石子應該放在最上層，這樣才能先攔截大型雜質，避免堵塞下方的細砂。'
-        : '💡 Gravel should be the top layer to catch large debris first and prevent clogging below.');
-    }
-
-    // Cotton should be at bottom
     if (r.layers.includes('cotton') && r.layers[r.layers.length - 1] !== 'cotton') {
-      lines.push(lang === 'zh'
-        ? '💡 棉花適合放在最底層，防止細砂從出水口流出。'
-        : '💡 Cotton works best at the bottom to prevent sand from escaping.');
+      lines.push('建議把棉花放在最底部做最後過濾。');
     }
-
-    // Scenario B: need carbon
-    if (r.scenario === 'B' && !r.layers.includes('carbon')) {
-      lines.push(lang === 'zh'
-        ? '🔬 這是池塘水，有臭味！你需要加入活性碳來吸附異味分子喔。'
-        : '🔬 This is pond water with odor! You need activated carbon to adsorb smell molecules.');
-    }
-
-    // Scenario B: has carbon but odor still medium
-    if (r.scenario === 'B' && r.layers.includes('carbon') && r.odorLevel === 'medium') {
-      lines.push(lang === 'zh'
-        ? '👃 活性碳有發揮作用，但氣味還沒完全消除。可以試試調整順序。'
-        : '👃 Activated carbon is helping, but some odor remains. Try adjusting the layer order.');
-    }
-
-    // Clarity feedback
-    if (r.clarity >= 90) {
-      lines.push(lang === 'zh' ? '✨ 水質非常清澈，做得很好！' : '✨ Water is very clear, great job!');
-    } else if (r.clarity >= 60) {
-      lines.push(lang === 'zh' ? '💧 水質還算可以，但還能更清澈。試試加入更多濾材層。' : '💧 Water clarity is decent but could be better. Try adding more filter layers.');
-    } else {
-      lines.push(lang === 'zh' ? '🌊 水還是相當渾濁，需要更多濾材來過濾。' : '🌊 Water is still quite turbid. More filter materials are needed.');
-    }
-
-    // Perfect order praise
-    const ideal = ['gravel', 'sand', 'carbon', 'cotton'];
-    if (r.layers.length === 4 && r.layers.every((m, i) => m === ideal[i])) {
-      lines.push(lang === 'zh' ? '🏆 完美的濾材順序！你已經掌握了物理過濾的核心原理。' : '🏆 Perfect layer order! You\'ve mastered the core principles of physical filtration.');
-    }
-
+    lines.push(r.clarity >= 70
+      ? '清澈度不錯，再微調順序可更好。'
+      : '清澈度偏低，試試調整濾材順序。');
     return lines.join('\n\n');
   }
 
-  /* ---- Message management ---- */
   addMessage(role, text, isThinking = false) {
     this._messages.push({ role, text, isThinking });
     if (!isThinking && window.DataLogger) {
@@ -352,18 +222,14 @@ class DrH2O extends HTMLElement {
   renderMessages() {
     const container = this.shadowRoot.getElementById('messages');
     container.innerHTML = '';
-
-    for (const msg of this._messages) {
+    this._messages.forEach((msg) => {
       const div = document.createElement('div');
       div.className = `drh2o-msg ${msg.role}${msg.isThinking ? ' thinking' : ''}`;
       div.textContent = msg.text;
       container.appendChild(div);
-    }
-
-    // Scroll to bottom
+    });
     container.scrollTop = container.scrollHeight;
   }
 }
 
-/* Register the custom element */
 customElements.define('dr-h2o', DrH2O);

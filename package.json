@@ -1,0 +1,10 @@
+{
+  "name": "clearwater-lab",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --use-system-ca server.js",
+    "check": "node --check server.js && node --check js/i18n.js && node --check js/app.js && node --check js/experiment.js && node --check js/lab.js && node --check js/animation.js && node --check js/scoring.js && node --check js/data-logger.js && node --check js/chatbot.js"
+  }
+}

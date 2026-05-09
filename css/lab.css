@@ -43,17 +43,31 @@
 
 .swatch-gravel {
   background:
-    radial-gradient(circle 5px at 30% 35%, #9E9E9E 60%, transparent 61%),
-    radial-gradient(circle 4px at 70% 25%, #BDBDBD 60%, transparent 61%),
-    radial-gradient(circle 6px at 55% 70%, #757575 60%, transparent 61%),
-    radial-gradient(circle 3px at 20% 75%, #BDBDBD 60%, transparent 61%),
-    #E0E0E0;
+    radial-gradient(ellipse 13px 10px at 28% 35%, #6F6F6F 60%, transparent 61%),
+    radial-gradient(ellipse 15px 12px at 68% 30%, #8A8A8A 60%, transparent 61%),
+    radial-gradient(ellipse 18px 13px at 52% 72%, #565656 60%, transparent 61%),
+    radial-gradient(ellipse 10px 8px at 18% 78%, #9C9C9C 60%, transparent 61%),
+    #D8D8D8;
+  border: 1px solid rgba(70, 70, 70, 0.28);
 }
 
 .swatch-sand {
   background:
     repeating-conic-gradient(#E8D5A3 0% 25%, #D4B96A 0% 50%) 0 0 / 6px 6px;
   border-radius: 8px;
+}
+
+.swatch-pebble {
+  background:
+    radial-gradient(circle 2.4px at 16% 22%, #B98545 60%, transparent 61%),
+    radial-gradient(circle 2px at 36% 18%, #D0A05E 60%, transparent 61%),
+    radial-gradient(circle 2.2px at 62% 26%, #A8753E 60%, transparent 61%),
+    radial-gradient(circle 1.8px at 82% 36%, #D7AF72 60%, transparent 61%),
+    radial-gradient(circle 2.4px at 25% 58%, #C8924E 60%, transparent 61%),
+    radial-gradient(circle 1.7px at 52% 64%, #A96F37 60%, transparent 61%),
+    radial-gradient(circle 2px at 76% 78%, #D2A060 60%, transparent 61%),
+    repeating-conic-gradient(#D8AC6E 0% 20%, #B77D3E 0% 40%, #E4C083 0% 60%) 0 0 / 10px 10px;
+  border: 1px solid rgba(184, 125, 62, 0.45);
 }
 
 .swatch-carbon {
@@ -244,6 +258,15 @@
     repeating-conic-gradient(#E8D5A3 0% 25%, #D4B96A 0% 50%) 0 0 / 8px 8px;
 }
 
+.filter-layer.layer-pebble {
+  background:
+    radial-gradient(circle 6px at 20% 38%, #8E8E8E 50%, transparent 51%),
+    radial-gradient(circle 6px at 46% 22%, #9D9D9D 50%, transparent 51%),
+    radial-gradient(circle 7px at 70% 60%, #7A7A7A 50%, transparent 51%),
+    radial-gradient(circle 4px at 84% 28%, #AFAFAF 50%, transparent 51%),
+    #C2C2C2;
+}
+
 .filter-layer.layer-carbon {
   background:
     radial-gradient(circle 4px at 15% 30%, #424242 50%, transparent 51%),
@@ -330,6 +353,46 @@
   opacity: 0.85;
 }
 
+.bottle-flow-column {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  width: 20px;
+  height: calc(100% - 116px);
+  transform: translateX(-50%) translateY(-12px);
+  border-radius: 99px;
+  background: linear-gradient(180deg, rgba(93,64,55,0.4), rgba(173,216,245,0.58));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.bottle-flow-column.running {
+  opacity: 0.7;
+  animation: bottleFlowPulse 1s ease-in-out infinite;
+}
+
+.bottle-filter-stream {
+  position: absolute;
+  bottom: -48px;
+  left: 50%;
+  width: 10px;
+  height: 58px;
+  transform: translateX(-50%);
+  border-radius: 99px;
+  background: linear-gradient(180deg, rgba(173,216,245,0.88), rgba(173,216,245,0.35));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.bottle-filter-stream.running {
+  opacity: 1;
+  animation-name: bottleStream;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
 /* ---------- Clog Warning Overlay ---------- */
 .clog-overlay {
   position: absolute;
@@ -368,6 +431,17 @@
 @keyframes waterSeep {
   0%   { top: -14px; opacity: 0.9; }
   100% { top: calc(100% + 14px); opacity: 0.5; }
+}
+
+@keyframes bottleFlowPulse {
+  0%, 100% { transform: translateX(-50%) translateY(-12px) scaleY(0.92); opacity: 0.45; }
+  50% { transform: translateX(-50%) translateY(6px) scaleY(1.03); opacity: 0.78; }
+}
+
+@keyframes bottleStream {
+  0% { transform: translateX(-50%) scaleY(0.35); opacity: 0.25; }
+  50% { transform: translateX(-50%) scaleY(1); opacity: 0.95; }
+  100% { transform: translateX(-50%) scaleY(0.35); opacity: 0.25; }
 }
 
 /* ---------- Layer separation lines ---------- */

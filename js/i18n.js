@@ -1,163 +1,142 @@
 /* ============================================================
-   i18n.js – ClearWater Lab  Bilingual Support (zh-TW / EN)
-   ============================================================ */
+  i18n.js – ClearWater Lab V2  Bilingual Support (zh-TW / EN)
+  ============================================================ */
 
 const STRINGS = {
-  /* -------- Global / Nav -------- */
-  siteTitle:        { zh: 'ClearWater Lab — 互動式濾水實驗室', en: 'ClearWater Lab — Interactive Filtration Lab' },
-  langToggle:       { zh: 'EN',  en: '中文' },
-  startTask:        { zh: '開始任務', en: 'Start Task' },
-  backToScenarios:  { zh: '← 返回選擇場景', en: '← Back to Scenarios' },
+  siteTitle: { zh: 'ClearWater Lab — 濾水實驗室 V2', en: 'ClearWater Lab — Water Filtration Lab V2' },
+  langToggle: { zh: 'EN', en: '中文' },
+  backToTask1: { zh: '← 返回任務 1', en: '← Back to Task 1' },
 
-  /* -------- Landing / Scenario -------- */
-  heroTitle:        { zh: 'ClearWater Lab', en: 'ClearWater Lab' },
-  heroSubtitle:     { zh: '探索物理過濾的科學原理', en: 'Explore the Science of Physical Filtration' },
-  chooseScenario:   { zh: '選擇實驗場景', en: 'Choose a Scenario' },
+  heroTitle: { zh: 'ClearWater Lab', en: 'ClearWater Lab' },
 
-  scenarioATitle:   { zh: '泥濘的河水', en: 'Muddy River Water' },
-  scenarioADesc:    { zh: '含有大量可見泥沙、碎葉，渾濁度極高。\n目標：降低濁度。', en: 'Contains visible mud, sand and leaves with very high turbidity.\nGoal: Reduce turbidity.' },
-
-  scenarioBTitle:   { zh: '發臭的景觀池水', en: 'Smelly Pond Water' },
-  scenarioBDesc:    { zh: '水質帶綠（藻類），有明顯的腐敗腥臭味。\n目標：降低濁度並去除異味。', en: 'Greenish water (algae) with a strong foul odor.\nGoal: Reduce turbidity AND remove odor.' },
-
-  /* -------- Materials -------- */
-  materialsTitle:   { zh: '濾材材料庫', en: 'Material Sandbox' },
-
-  gravel:           { zh: '大石子', en: 'Gravel' },
-  gravelDesc:       { zh: '攔截大型樹葉與碎石', en: 'Blocks large leaves and debris' },
-
-  sand:             { zh: '細砂', en: 'Sand' },
-  sandDesc:         { zh: '過濾中小型懸浮泥沙', en: 'Filters medium & small suspended particles' },
-
-  carbon:           { zh: '活性碳', en: 'Activated Carbon' },
-  carbonDesc:       { zh: '物理吸附色素與臭味分子', en: 'Adsorbs pigments and odor molecules' },
-
-  cotton:           { zh: '棉花', en: 'Cotton' },
-  cottonDesc:       { zh: '防止細砂流失並捕捉微粒', en: 'Prevents sand loss & catches fine particles' },
-
-  /* -------- Lab Actions -------- */
-  bottlePlaceholder:{ zh: '將濾材拖曳至此處', en: 'Drag materials here' },
-  startFilter:      { zh: '開始過濾', en: 'Start Filtering' },
-  clearAll:         { zh: '清除全部', en: 'Clear All' },
-  tryAgain:         { zh: '重新嘗試', en: 'Try Again' },
-  filtering:        { zh: '過濾中…', en: 'Filtering…' },
-
-  /* -------- Scenario header in lab -------- */
-  taskLabel:        { zh: '當前任務', en: 'Current Task' },
-
-  /* -------- Dashboard -------- */
-  dashboardTitle:   { zh: '數據儀表板', en: 'Dashboard' },
-  turbidityLabel:   { zh: '濁度（清澈程度）', en: 'Turbidity (Clarity)' },
-  odorLabel:        { zh: '氣味偵測器', en: 'Odor Detector' },
-  flowLabel:        { zh: '流速監控', en: 'Flow Speed' },
-  seconds:          { zh: '秒', en: 's' },
-
-  odorStrong:       { zh: '強', en: 'Strong' },
-  odorMedium:       { zh: '中', en: 'Medium' },
-  odorNone:         { zh: '無', en: 'None' },
-
-  /* -------- Chatbot / Dr. H2O -------- */
-  drH2OTitle:       { zh: 'Dr. H₂O', en: 'Dr. H₂O' },
-  analysisReady:    { zh: '分析報告已生成', en: 'Analysis report ready' },
-  askPlaceholder:   { zh: '輸入問題，例如「為什麼水流不動？」', en: 'Ask a question, e.g. "Why is the water stuck?"' },
-  sendBtn:          { zh: '送出', en: 'Send' },
-  thinking:         { zh: 'Dr. H₂O 思考中…', en: 'Dr. H₂O is thinking…' },
-  errorAI:          { zh: 'AI 回覆失敗，請稍後再試。', en: 'AI response failed. Please try again later.' },
-
-  /* -------- Misc -------- */
-  clogWarning:      { zh: '⚠ 濾材堵塞！水流無法通過。', en: '⚠ Clogged! Water cannot pass through.' },
-  removeLayer:      { zh: '移除', en: 'Remove' },
-
-  /* ======== EXPERIMENT FLOW ======== */
-
-  /* -------- Login Screen -------- */
-  loginTitle:       { zh: '歡迎參加實驗', en: 'Welcome to the Experiment' },
-  loginSubtitle:    { zh: '請輸入你的參與者編號以開始', en: 'Please enter your participant ID to begin' },
-  loginIdLabel:     { zh: '參與者編號', en: 'Participant ID' },
+  loginTitle: { zh: '歡迎參加實驗', en: 'Welcome to the Experiment' },
+  loginSubtitle: { zh: '請輸入你的參與者編號以開始', en: 'Enter your participant ID to begin' },
+  loginIdLabel: { zh: '參與者編號', en: 'Participant ID' },
   loginIdPlaceholder: { zh: '例如：S01', en: 'e.g. S01' },
-  loginBtn:         { zh: '開始實驗', en: 'Start Experiment' },
-  loginError:       { zh: '請輸入有效的參與者編號（例如 S01）', en: 'Please enter a valid participant ID (e.g. S01)' },
+  loginBtn: { zh: '開始實驗', en: 'Start Experiment' },
+  loginError: { zh: '請輸入有效的參與者編號', en: 'Please enter a valid participant ID' },
 
-  /* -------- Consent Screen -------- */
-  consentTitle:     { zh: '參與同意書', en: 'Informed Consent' },
-  consentText:      {
-    zh: '感謝你參加本研究實驗。\n\n本實驗旨在了解不同學習方式對濾水概念理解的影響。實驗過程中，你將完成一份前測問卷、使用虛擬濾水實驗室進行操作，以及完成一份後測問卷。\n\n你的資料將完全匿名處理，僅用於學術研究目的。你的參與完全自願，可隨時退出。\n\n如有任何問題，請向研究人員詢問。',
-    en: 'Thank you for participating in this research experiment.\n\nThis experiment aims to understand how different learning approaches affect understanding of water filtration concepts. During the experiment, you will complete a pre-test questionnaire, use a virtual filtration lab, and complete a post-test questionnaire.\n\nYour data will be completely anonymous and used only for academic research purposes. Your participation is entirely voluntary, and you may withdraw at any time.\n\nIf you have any questions, please ask the researcher.'
-  },
-  consentAgree:     { zh: '我已閱讀並同意參加本實驗', en: 'I have read and agree to participate' },
-  consentBtn:       { zh: '繼續', en: 'Continue' },
-
-  /* -------- Pre-test / Post-test -------- */
-  pretestTitle:     { zh: '前測問卷', en: 'Pre-Test Questionnaire' },
-  pretestDesc:      { zh: '請根據你目前的知識回答以下問題，答不出來也沒關係。', en: 'Please answer the following questions based on your current knowledge. It is okay if you are unsure.' },
-  posttestTitle:    { zh: '後測問卷', en: 'Post-Test Questionnaire' },
-  posttestDesc:     { zh: '請根據你在實驗中學到的知識回答以下問題。', en: 'Please answer the following questions based on what you learned during the experiment.' },
-  submitTest:       { zh: '提交問卷', en: 'Submit' },
-  questionLabel:    { zh: '第 {n} 題', en: 'Question {n}' },
-  testIncomplete:   { zh: '請回答所有問題後再提交。', en: 'Please answer all questions before submitting.' },
-
-  /* -------- Experiment Instructions -------- */
-  instructionsTitle:{ zh: '實驗說明', en: 'Experiment Instructions' },
+  instructionsTitle: { zh: '實驗說明', en: 'Instructions' },
   instructionsText: {
-    zh: '在這個實驗中，你將使用虛擬濾水實驗室來學習物理過濾的原理。\n\n你需要完成兩個場景的實驗：\n1. 場景 A：泥濘的河水 — 目標是降低濁度\n2. 場景 B：發臭的景觀池水 — 目標是降低濁度並去除異味\n\n每個場景至少需要嘗試 2 次不同的濾材組合。\n\n操作方式：\n• 將左側的濾材拖曳到瓶子中\n• 點擊「開始過濾」觀察結果\n• 根據結果調整濾材順序\n• 右側儀表板顯示過濾效果',
-    en: 'In this experiment, you will use a virtual filtration lab to learn the principles of physical filtration.\n\nYou need to complete experiments for two scenarios:\n1. Scenario A: Muddy River Water — Goal: reduce turbidity\n2. Scenario B: Smelly Pond Water — Goal: reduce turbidity AND remove odor\n\nYou must try at least 2 different filter configurations for each scenario.\n\nHow to use:\n• Drag filter materials from the left sidebar into the bottle\n• Click "Start Filtering" to see the results\n• Adjust material order based on results\n• The dashboard on the right shows filtration performance'
+    zh: '你將完成兩個任務。\n\n任務 1：將濾材依孔隙大小（Gap Size）由大到小排序。\n正確順序後，系統會展示四組平行濾水動畫與各自的清澈度、流速成績。\n\n任務 2：泥濘的河水濾水挑戰。\n請拖曳濾材建立濾水層，並觀察清澈度與流速。',
+    en: 'You will complete two tasks.\n\nTask 1: Rank materials by gap size from largest to smallest.\nAfter the correct order is built, the app runs four parallel filtration animations and shows each filter score (clarity and speed).\n\nTask 2: Muddy river water filtration challenge.\nDrag materials to build a filter stack and observe clarity and flow speed.'
   },
-  instructionsBtn:  { zh: '開始實驗', en: 'Begin Experiment' },
+  instructionsBtn: { zh: '前往任務 1', en: 'Go to Task 1' },
 
-  /* -------- Scenario Progress -------- */
-  scenarioComplete:      { zh: '場景 {s} 已完成！', en: 'Scenario {s} complete!' },
-  scenarioNeedMore:      { zh: '此場景至少還需要嘗試 {n} 次', en: 'You need at least {n} more attempt(s) for this scenario' },
-  nextScenarioBtn:       { zh: '前往場景 B', en: 'Go to Scenario B' },
-  finishExperimentBtn:   { zh: '完成實驗', en: 'Finish Experiment' },
-  scenarioAComplete:     { zh: '✓ 場景 A 已完成', en: '✓ Scenario A Complete' },
-  scenarioBComplete:     { zh: '✓ 場景 B 已完成', en: '✓ Scenario B Complete' },
-  attemptsCount:         { zh: '已嘗試 {n} 次', en: '{n} attempt(s)' },
-  progressLabel:         { zh: '實驗進度', en: 'Experiment Progress' },
+  task1Title: { zh: '任務 1：濾材孔隙大小排序', en: 'Task 1: Rank by Gap Size' },
+  task1Subtitle: {
+    zh: '請觀察材料特性，將濾材依孔隙大小由大到小排列。',
+    en: 'Observe the material properties and arrange the filters from largest to smallest gap size.'
+  },
+  materialsTitle: { zh: '材料庫', en: 'Material Inventory' },
+  rankingBoardTitle: { zh: '排序區（由左到右）', en: 'Ranking Board (left to right)' },
+  rankingSlot: { zh: '位置 {n}', en: 'Slot {n}' },
+  rankingReady: { zh: '排序正確！可開始平行濾水展示。', en: 'Correct order! You can start the parallel demo.' },
+  startParallelDemo: { zh: '確認次序', en: 'Confirm Order' },
+  task1ClearAll: { zh: '清除排序', en: 'Clear Order' },
+  task1DemoTitle: { zh: '任務 1：平行濾水展示', en: 'Task 1: Parallel Filtering Demo' },
+  task1DemoDesc: { zh: '四種濾材會同時進行濾水，完成時間不同，因此結果卡會依序出現。', en: 'The four materials filter water at the same time. Their result cards appear at different times because each material has a different flow speed.' },
+  demoRunning: { zh: '展示進行中…', en: 'Running demo...' },
+  proceedCodeLock: { zh: '下一頁', en: 'Next Page' },
+  task1FilterLabel: { zh: '濾材：{m}', en: 'Material: {m}' },
+  miniScoreTitle: { zh: '結果', en: 'Result' },
+  clarityLabel: { zh: '清澈度', en: 'Clarity' },
+  flowLabel: { zh: '流速時間', en: 'Flow Time' },
+  rankingFeedbackDefault: { zh: '把濾材拖曳到下方排序區。', en: 'Drag materials into the ranking board below.' },
+  rankingWrongFeedback: { zh: '{placed} 暫時不能放在這裡。請比較濾材孔隙大小，再試一次。', en: '{placed} does not fit here yet. Compare the materials by gap size and try again.' },
+  rankingWrongOrder: { zh: '次序還不正確，請重新比較濾材孔隙大小後再試一次。', en: 'The order is not correct yet. Compare the materials by gap size and try again.' },
+  rankingGapReminder: { zh: '提醒：{small} 的孔隙比 {large} 小，孔隙較小的材料不應排在孔隙較大的材料前面。', en: 'Reminder: {small} has a smaller gap size than {large}. A smaller-gap material should not come before a larger-gap material.' },
+  rankingIncomplete: { zh: '請先把 4 種濾材都放入排序區，再確認次序。', en: 'Please place all 4 materials in the ranking board before confirming.' },
+  rankingSlotOccupied: { zh: '這個位置已有濾材。請先移除或拖曳已放入的濾材來調整位置。', en: 'This slot already has a material. Remove it first or drag ranked materials to reorder.' },
+  rankingDuplicate: { zh: '此濾材已在排序區中。', en: 'This material is already in the ranking board.' },
+  rankingPebbleBeforeGravel: { zh: '提醒：粗砂粒的孔隙比石頭小，粗砂粒不應排在石頭前面。', en: 'Reminder: Pebble has a smaller gap size than Gravel, so Pebble should not come before Gravel.' },
+  rankingSandBeforeGravel: { zh: '提醒：細砂粒的孔隙比石頭小，細砂粒不應排在石頭前面。', en: 'Reminder: Sand has a smaller gap size than Gravel, so Sand should not come before Gravel.' },
+  rankingSandBeforePebble: { zh: '提醒：細砂粒的孔隙比粗砂粒小，細砂粒不應排在粗砂粒前面。', en: 'Reminder: Sand has a smaller gap size than Pebble, so Sand should not come before Pebble.' },
+  rankingCottonBeforeGravel: { zh: '提醒：棉花的孔隙比石頭小，棉花不應排在石頭前面。', en: 'Reminder: Cotton has a smaller gap size than Gravel, so Cotton should not come before Gravel.' },
+  rankingCottonBeforePebble: { zh: '提醒：棉花的孔隙比粗砂粒小，棉花不應排在粗砂粒前面。', en: 'Reminder: Cotton has a smaller gap size than Pebble, so Cotton should not come before Pebble.' },
+  rankingCottonBeforeSand: { zh: '提醒：棉花的孔隙比細砂粒小，棉花不應排在細砂粒前面。', en: 'Reminder: Cotton has a smaller gap size than Sand, so Cotton should not come before Sand.' },
+  seconds: { zh: '秒', en: 's' },
 
-  /* -------- Completion Screen -------- */
-  completionTitle:  { zh: '實驗完成！', en: 'Experiment Complete!' },
-  completionText:   { zh: '感謝你的參與！你的實驗數據已自動儲存。\n\n你可以關閉此頁面。', en: 'Thank you for your participation! Your experiment data has been saved automatically.\n\nYou may close this page.' },
-  completionId:     { zh: '參與者編號', en: 'Participant ID' },
-  completionGroup:  { zh: '實驗組別', en: 'Experiment Group' },
-  groupAI:          { zh: 'AI 輔助組', en: 'AI-Assisted Group' },
-  groupControl:     { zh: '對照組', en: 'Control Group' },
-  completionPreScore:  { zh: '前測分數', en: 'Pre-Test Score' },
-  completionPostScore: { zh: '後測分數', en: 'Post-Test Score' },
-  downloadData:     { zh: '下載實驗數據', en: 'Download Experiment Data' },
+  codeLockTitle: { zh: '任務解鎖', en: 'Task Unlock' },
+  codeLockDesc: { zh: '請輸入正確代碼以進入任務 2。', en: 'Enter the correct code to unlock Task 2.' },
+  codeLockPlaceholder: { zh: '輸入代碼', en: 'Enter code' },
+  codeLockBtn: { zh: '解鎖任務 2', en: 'Unlock Task 2' },
+  codeLockWrong: { zh: '代碼錯誤，請再試一次。', en: 'Incorrect code, please try again.' },
+  codeLockSuccess: { zh: '解鎖成功！', en: 'Unlocked successfully!' },
+
+  task2Title: { zh: '任務 2：泥濘的河水', en: 'Task 2: Muddy River Water' },
+  taskLabel: { zh: '當前任務', en: 'Current Task' },
+  task2Desc: { zh: '目標：提升清澈度並維持合理流速。', en: 'Goal: Improve clarity while keeping a reasonable flow speed.' },
+  gravel: { zh: '石頭', en: 'Gravel' },
+  pebble: { zh: '粗砂粒', en: 'Pebble' },
+  sand: { zh: '細砂粒', en: 'Sand' },
+  cotton: { zh: '棉花', en: 'Cotton' },
+  gravelDesc: { zh: '攔截最大顆粒雜質', en: 'Blocks largest debris' },
+  pebbleDesc: { zh: '過濾中大型顆粒', en: 'Filters medium-large particles' },
+  sandDesc: { zh: '過濾細小懸浮顆粒', en: 'Filters fine suspended particles' },
+  cottonDesc: { zh: '最後攔截微細顆粒', en: 'Final micro-particle barrier' },
+  bottlePlaceholder: { zh: '將濾材拖曳到此', en: 'Drag materials here' },
+  startFilter: { zh: '開始過濾', en: 'Start Filtering' },
+  filtering: { zh: '過濾中…', en: 'Filtering...' },
+  clearAll: { zh: '清除全部', en: 'Clear All' },
+  removeLayer: { zh: '移除', en: 'Remove' },
+  dashboardTitle: { zh: '結果儀表板', en: 'Result Dashboard' },
+  turbidityLabel: { zh: '清澈度', en: 'Clarity' },
+  speedLabel: { zh: '流速', en: 'Flow Speed' },
+  tryAgain: { zh: '重新嘗試', en: 'Try Again' },
+  finishTask2: { zh: '完成任務 2', en: 'Finish Task 2' },
+  task2MaxMaterials: { zh: '最多只能放入 4 種濾材，請先移除一層再加入新的濾材。', en: 'You can place at most 4 materials in the filter. Remove one layer before adding another.' },
+  task2TrialStatus: { zh: '請至少完成 3 次濾水嘗試。目前：{done}/3', en: 'Complete at least 3 filtration trials. Current: {done}/3' },
+  task2Ready: { zh: '已完成 3 次濾水嘗試，可以完成任務 2。', en: 'You have completed 3 filtration trials and can finish Task 2.' },
+  clogWarning: { zh: '濾材堵塞，請調整順序', en: 'Filter clogged, adjust the order' },
+
+  completionTitle: { zh: '實驗完成！', en: 'Experiment Complete!' },
+  completionText: { zh: '感謝你的參與，資料已儲存。', en: 'Thank you for participating. Data is saved.' },
+  completionId: { zh: '參與者編號', en: 'Participant ID' },
+  completionGroup: { zh: '實驗組別', en: 'Experiment Group' },
+  completionTask1: { zh: '任務 1', en: 'Task 1' },
+  completionTask2: { zh: '任務 2', en: 'Task 2' },
+  statusDone: { zh: '已完成', en: 'Completed' },
+  statusPending: { zh: '未完成', en: 'Pending' },
+  groupAI: { zh: 'AI 輔助組', en: 'AI-Assisted Group' },
+  groupControl: { zh: '對照組', en: 'Control Group' },
+  downloadData: { zh: '下載實驗數據', en: 'Download Data' },
+
+  askPlaceholder: { zh: '輸入問題，例如：為什麼這層放上面？', en: 'Ask a question, e.g. Why should this layer be on top?' },
+  sendBtn: { zh: '送出', en: 'Send' },
+  thinking: { zh: 'Dr. H2O 思考中…', en: 'Dr. H2O is thinking...' },
+  errorAI: { zh: '目前無法連線 AI，請稍後再試。', en: 'AI is unavailable right now. Please try again later.' },
+  analysisReady: { zh: '分析完成', en: 'Analysis ready' }
 };
 
-/* ---------- State ---------- */
-let currentLang = 'zh';                 // default language
+let currentLang = 'zh';
 
-/* ---------- Public API ---------- */
-
-/** Get a translated string by key */
 function t(key) {
   const entry = STRINGS[key];
   if (!entry) return key;
-  return entry[currentLang] || entry['en'] || key;
+  return entry[currentLang] || entry.en || key;
 }
 
-/** Get current language code */
 function getLang() {
   return currentLang;
 }
 
-/** Set language and re-render all [data-i18n] elements */
 function setLang(lang) {
-  currentLang = lang;
-  document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
-  applyI18n();
+  currentLang = lang === 'en' ? 'en' : 'zh';
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-TW' : 'en';
+  if (window.I18n && window.I18n.applyI18n && window.I18n.applyI18n !== applyI18n) {
+    window.I18n.applyI18n();
+  } else {
+    applyI18n();
+  }
 }
 
-/** Toggle between zh and en */
 function toggleLang() {
   setLang(currentLang === 'zh' ? 'en' : 'zh');
 }
 
-/** Walk the DOM and update every element that has a data-i18n attribute */
 function applyI18n() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');
     const text = t(key);
     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -166,10 +145,14 @@ function applyI18n() {
       el.textContent = text;
     }
   });
-  // Also update the toggle button label itself
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    el.placeholder = t(key);
+  });
+
   const toggleBtn = document.getElementById('lang-toggle');
   if (toggleBtn) toggleBtn.textContent = t('langToggle');
 }
 
-/* ---------- Exports (global) ---------- */
 window.I18n = { t, getLang, setLang, toggleLang, applyI18n, STRINGS };
