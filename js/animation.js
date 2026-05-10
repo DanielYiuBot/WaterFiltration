@@ -7,6 +7,19 @@ const WATER_COLORS = {
   clean: 'rgba(173, 216, 245, 0.35)',
 };
 
+/**
+ * Visual cleanness 0 = muddy, 1 = clean. A/B/C are fixed steps so output water reads
+ * "dirty / medium / slightly dirty" regardless of numeric clarity bar.
+ */
+function getFilteredWaterCleanMix(result) {
+  if (result.clogged) return 0;
+  const v = result.task2Variant;
+  if (v === 'A') return 0.12;
+  if (v === 'B') return 0.42;
+  if (v === 'C') return 0.78;
+  return (result.clarity ?? 0) / 100;
+}
+
 async function runFilterAnimation(layers, result) {
   const bottle = document.getElementById('bottle');
   const reservoir = document.getElementById('water-reservoir');
@@ -30,7 +43,11 @@ async function runFilterAnimation(layers, result) {
   reservoir.classList.remove('filtered');
   reservoir.style.background = 'linear-gradient(180deg, #5D4037 0%, #795548 60%, #8D6E63 100%)';
 
-  beaker.style.background = interpolateColor(WATER_COLORS.dirty, WATER_COLORS.clean, result.clarity / 100);
+  beaker.style.background = interpolateColor(
+    WATER_COLORS.dirty,
+    WATER_COLORS.clean,
+    getFilteredWaterCleanMix(result)
+  );
   beaker.style.transition = `height ${totalDuration}ms linear, background ${totalDuration}ms ease`;
   requestAnimationFrame(() => {
     flowColumn.classList.add('running');
@@ -182,5 +199,6 @@ window.Animation = {
   runTask1ParallelDemo,
   resetAnimation,
   WATER_COLORS,
+  getFilteredWaterCleanMix,
   sleep,
 };

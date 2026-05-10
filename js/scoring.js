@@ -14,9 +14,9 @@ const TASK2_INITIAL = { turbidity: 100, name: 'muddy-river' };
 // Exact outcomes for the three reference stacks from teaching materials.
 // layers[] order is top → bottom (first drop lands at bottom; addLayer uses unshift).
 const TASK2_VARIANT_KEYS = {
-  A: 'gravel>coarseSand>sand>cotton',
+  A: 'cotton>sand>coarseSand>gravel',
   B: 'coarseSand>sand>gravel>cotton',
-  C: 'cotton>sand>coarseSand>gravel',
+  C: 'gravel>coarseSand>sand>cotton',
 };
 
 function classifyTask2Variant(layers) {
@@ -29,19 +29,19 @@ function classifyTask2Variant(layers) {
 }
 
 const TASK2_EXAMPLE_RESULTS = {
-  // A：gravel→…→cotton（與昔日「C」預設對調數值：清澈度較佳）
+  // C：gravel→…→cotton（與工作紙方法 C；清澈度較佳）
   'gravel>coarseSand>sand>cotton': {
     clarity: 90,
     flowTime: 70,
     scienceExplanation: '過濾效果：水最清澈。濾材由大空隙到小空隙，能逐步阻擋不同大小雜質。',
   },
-  // B：由上而下 粗砂粒→幼砂粒→石頭→棉花（與舊版 B 層序相反）
+  // B：由上而下 粗砂粒→幼砂粒→石頭→棉花
   'coarseSand>sand>gravel>cotton': {
     clarity: 65,
     flowTime: 80,
     scienceExplanation: '過濾效果：水較混濁。次序未完全由大到小，清澈度與流速居中。',
   },
-  // C：cotton→…→gravel（與昔日「A」預設對調數值：清澈度較差）
+  // A：cotton→…→gravel（與工作紙方法 A；清澈度較差）
   'cotton>sand>coarseSand>gravel': {
     clarity: 40,
     flowTime: 120,
