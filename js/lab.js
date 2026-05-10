@@ -29,6 +29,27 @@ const Lab = (() => {
     resetTask2State();
   }
 
+  function getLabDropTarget(clientX, clientY) {
+    const els = document.elementsFromPoint(clientX, clientY);
+    for (let i = 0; i < els.length; i++) {
+      const node = els[i];
+      if (node.classList?.contains('pointer-dnd-ghost')) continue;
+      if (node.closest?.('#bottle')) return { kind: 'bottle' };
+    }
+    return null;
+  }
+
+  function labPointerHover(t) {
+    bottle.classList.toggle('drag-over', !!(t && t.kind === 'bottle'));
+  }
+
+  function labPointerDrop(material, target) {
+    bottle.classList.remove('drag-over');
+    if (!target || target.kind !== 'bottle' || !material) return;
+    if (isFiltering) return;
+    addLayer(material);
+  }
+
   function setupDragAndDrop() {
     document.querySelectorAll('#lab-screen .material-card[draggable]').forEach((card) => {
       card.addEventListener('dragstart', onDragStart);
@@ -37,6 +58,16 @@ const Lab = (() => {
         if (isFiltering) return;
         addLayer(card.dataset.material);
       });
+
+      if (window.PointerDnD) {
+        window.PointerDnD.attach(card, {
+          canStart: () => !isFiltering,
+          getPayload: () => card.dataset.material,
+          getDropTarget: getLabDropTarget,
+          onDrop: labPointerDrop,
+          onHoverChange: labPointerHover,
+        });
+      }
     });
 
     bottle.addEventListener('dragover', onDragOver);

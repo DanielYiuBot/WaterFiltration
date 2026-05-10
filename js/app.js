@@ -28,6 +28,62 @@
     'cotton>sand': 'rankingCottonBeforeSand',
   };
 
+  function handleTask1InventoryDrop(payload) {
+    if (payload.source === 'ranking') removeMaterialAt(payload.index);
+  }
+
+  function handleTask1SlotDrop(payload, slotIndex) {
+    const material = payload.material;
+    if (!material || Number.isNaN(slotIndex)) return;
+    if (payload.source === 'ranking') {
+      moveRankedMaterial(payload.index, slotIndex);
+    } else {
+      placeMaterial(material, slotIndex);
+    }
+  }
+
+  function getTask1DropTarget(clientX, clientY) {
+    const els = document.elementsFromPoint(clientX, clientY);
+    for (let i = 0; i < els.length; i++) {
+      const node = els[i];
+      if (node.classList?.contains('pointer-dnd-ghost')) continue;
+      if (node.closest?.('.task1-inventory')) return { kind: 'inventory' };
+      const slot = node.closest?.('.ranking-slot');
+      if (slot) {
+        const idx = Number(slot.dataset.index);
+        if (!Number.isNaN(idx)) return { kind: 'slot', index: idx };
+      }
+    }
+    return null;
+  }
+
+  function task1PointerHover(t) {
+    document.querySelectorAll('.task1-inventory.drag-over, .ranking-slot.drag-over').forEach((n) => {
+      n.classList.remove('drag-over');
+    });
+    if (!t) return;
+    if (t.kind === 'inventory') {
+      document.querySelector('.task1-inventory')?.classList.add('drag-over');
+    } else if (t.kind === 'slot') {
+      const slot = slots.find((s) => Number(s.dataset.index) === t.index);
+      slot?.classList.add('drag-over');
+    }
+  }
+
+  function task1PointerDrop(payload, target) {
+    document.querySelectorAll('.task1-inventory.drag-over, .ranking-slot.drag-over').forEach((n) => {
+      n.classList.remove('drag-over');
+    });
+    if (!target) return;
+    if (target.kind === 'inventory') {
+      handleTask1InventoryDrop(payload);
+      return;
+    }
+    if (target.kind === 'slot') {
+      handleTask1SlotDrop(payload, target.index);
+    }
+  }
+
   function setupTask1() {
     const cards = [...document.querySelectorAll('.task1-material')];
     cards.forEach((card) => {
@@ -40,6 +96,16 @@
         const nextIdx = ranking.findIndex((v) => v === null);
         if (nextIdx !== -1) placeMaterial(card.dataset.material, nextIdx);
       });
+
+      if (window.PointerDnD) {
+        window.PointerDnD.attach(card, {
+          canStart: () => true,
+          getPayload: () => ({ source: 'inventory', material: card.dataset.material }),
+          getDropTarget: getTask1DropTarget,
+          onDrop: task1PointerDrop,
+          onHoverChange: task1PointerHover,
+        });
+      }
     });
 
     const inventory = document.querySelector('.task1-inventory');
@@ -53,7 +119,7 @@
         e.preventDefault();
         inventory.classList.remove('drag-over');
         const payload = getDragPayload(e);
-        if (payload.source === 'ranking') removeMaterialAt(payload.index);
+        handleTask1InventoryDrop(payload);
       });
     }
 
@@ -67,14 +133,8 @@
         e.preventDefault();
         slot.classList.remove('drag-over');
         const payload = getDragPayload(e);
-        const material = payload.material;
         const idx = Number(slot.dataset.index);
-        if (!material || Number.isNaN(idx)) return;
-        if (payload.source === 'ranking') {
-          moveRankedMaterial(payload.index, idx);
-        } else {
-          placeMaterial(material, idx);
-        }
+        handleTask1SlotDrop(payload, idx);
       });
     });
 
@@ -170,6 +230,16 @@
         if (task1Confirmed) return;
         removeMaterialAt(idx);
       });
+
+      if (window.PointerDnD) {
+        window.PointerDnD.attach(chip, {
+          canStart: () => !task1Confirmed,
+          getPayload: () => ({ source: 'ranking', material: current, index: idx }),
+          getDropTarget: getTask1DropTarget,
+          onDrop: task1PointerDrop,
+          onHoverChange: task1PointerHover,
+        });
+      }
       slot.appendChild(chip);
     });
   }
