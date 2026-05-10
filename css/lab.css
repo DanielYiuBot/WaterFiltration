@@ -127,10 +127,21 @@
   padding-top: 10px;
 }
 
+/* Task 2 column: reservoir + exactly 4 filter slots + spout (tube has no extra slack) */
 .bottle {
+  --lab-reservoir-height: 90px;
+  --lab-filter-layer-height: 64px;
+  --lab-max-layers: 4;
+  --lab-output-height: 15px;
+
   position: relative;
   width: 260px;
-  min-height: 480px;
+  min-height: calc(
+    var(--lab-reservoir-height) +
+      var(--lab-filter-layer-height) * var(--lab-max-layers) +
+      var(--lab-output-height)
+  );
+  height: auto;
   background: linear-gradient(
     180deg,
     rgba(255,255,255,0.35) 0%,
@@ -178,7 +189,7 @@
 
 /* ---------- Water Reservoir (top) ---------- */
 .water-reservoir {
-  height: 100px;
+  height: var(--lab-reservoir-height);
   width: 100%;
   transition: background 1.5s ease;
   position: relative;
@@ -200,12 +211,13 @@
 
 /* ---------- Bottle Layers ---------- */
 .bottle-layers {
-  flex: 1;
+  flex: 0 0 calc(var(--lab-filter-layer-height) * var(--lab-max-layers));
   display: flex;
   flex-direction: column-reverse;   /* layers stack bottom-up */
   width: 100%;
   position: relative;
-  min-height: 300px;
+  min-height: calc(var(--lab-filter-layer-height) * var(--lab-max-layers));
+  max-height: calc(var(--lab-filter-layer-height) * var(--lab-max-layers));
 }
 
 .placeholder-text {
@@ -223,7 +235,7 @@
 /* Individual layer inside bottle */
 .filter-layer {
   width: 100%;
-  height: 68px;
+  height: var(--lab-filter-layer-height);
   position: relative;
   display: flex;
   align-items: center;
@@ -233,7 +245,7 @@
 }
 
 .filter-layer .layer-label {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: rgba(255,255,255,0.9);
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -314,7 +326,7 @@
 
 /* ---------- Water Output Spout ---------- */
 .water-output {
-  height: 16px;
+  height: var(--lab-output-height);
   width: 60%;
   margin: 0 auto;
   background: transparent;
@@ -382,11 +394,11 @@
 
 .bottle-flow-column {
   position: absolute;
-  top: 100px;
+  top: var(--lab-reservoir-height);
   left: 50%;
   width: 20px;
-  height: calc(100% - 116px);
-  transform: translateX(-50%) translateY(-12px);
+  height: calc(var(--lab-filter-layer-height) * var(--lab-max-layers));
+  transform: translateX(-50%) translateY(-11px);
   border-radius: 99px;
   background: linear-gradient(180deg, rgba(93,64,55,0.4), rgba(173,216,245,0.58));
   opacity: 0;
@@ -404,7 +416,7 @@
   bottom: -48px;
   left: 50%;
   width: 10px;
-  height: 58px;
+  height: 54px;
   transform: translateX(-50%);
   border-radius: 99px;
   background: linear-gradient(180deg, rgba(173,216,245,0.88), rgba(173,216,245,0.35));

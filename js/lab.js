@@ -102,6 +102,7 @@ const Lab = (() => {
     renderLayers();
     hideDashboard();
     if (btnFinishTask2) btnFinishTask2.classList.add('hidden');
+    updateTrialStatus();
   }
 
   function removeLayer(index) {
@@ -110,6 +111,7 @@ const Lab = (() => {
     renderLayers();
     hideDashboard();
     if (btnFinishTask2) btnFinishTask2.classList.add('hidden');
+    updateTrialStatus();
   }
 
   function clearLayers() {
@@ -159,6 +161,17 @@ const Lab = (() => {
 
   async function startFiltering() {
     if (isFiltering || layers.length === 0) return;
+
+    if (layers.length !== MAX_MATERIALS) {
+      showTask2Message(I18n.t('task2NeedFourWorksheet'), 'error');
+      return;
+    }
+
+    if (!Scoring.classifyTask2Variant(layers)) {
+      showTask2Message(I18n.t('task2NotWorksheetOrder'), 'error');
+      return;
+    }
+
     isFiltering = true;
     btnFilter.disabled = true;
     btnFilter.textContent = I18n.t('filtering');
@@ -172,7 +185,7 @@ const Lab = (() => {
     showDashboard(result);
     Experiment.onTask2FilterComplete(result);
 
-    if (window.DrH2OElement && document.querySelector('dr-h2o').style.display !== 'none') {
+    if (window.DrH2OElement && window.Experiment && Experiment.isTask2Screen()) {
       window.DrH2OElement.onFilterComplete(result);
     }
 
@@ -217,7 +230,7 @@ const Lab = (() => {
     const canFinish = Experiment.canCompleteTask2();
     trialStatus.textContent = canFinish
       ? I18n.t('task2Ready')
-      : I18n.t('task2TrialStatus').replace('{done}', count);
+      : I18n.t('task2TrialStatus').replace(/\{done\}/g, String(count));
     trialStatus.className = `task2-trial-status${canFinish ? ' ready' : ''}`;
 
     if (btnFinishTask2) {

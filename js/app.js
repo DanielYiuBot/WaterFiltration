@@ -320,6 +320,16 @@
       Lab.updateTrialStatus();
     }
 
+    const completionScreen = document.getElementById('completion-screen');
+    if (
+      completionScreen
+      && completionScreen.classList.contains('active')
+      && window.Experiment
+      && typeof Experiment.updateCompletionSummary === 'function'
+    ) {
+      Experiment.updateCompletionSummary();
+    }
+
     document.querySelectorAll('.mini-filter').forEach((card) => {
       const mat = card.dataset.material;
       const nameEl = card.querySelector('.mini-filter-name');

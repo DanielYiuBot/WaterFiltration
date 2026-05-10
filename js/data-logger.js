@@ -5,7 +5,6 @@
 const DataLogger = (() => {
   let _data = {
     participantId: '',
-    group: '',
     language: '',
     sessionStartTime: null,
     sessionEndTime: null,
@@ -27,9 +26,8 @@ const DataLogger = (() => {
     chatLogs: [],
   };
 
-  function init(participantId, group) {
+  function init(participantId) {
     _data.participantId = participantId;
-    _data.group = group;
     _data.language = I18n.getLang();
     _data.sessionStartTime = new Date().toISOString();
     _save();
@@ -83,6 +81,8 @@ const DataLogger = (() => {
     _data.task2.attempts.push({
       timestamp: new Date().toISOString(),
       layers: [...result.layers],
+      task2Variant: result.task2Variant != null ? result.task2Variant : null,
+      scienceExplanation: result.scienceExplanation || '',
       turbidity: result.turbidity,
       clarity: result.clarity,
       flowTime: result.flowTime,
@@ -111,6 +111,120 @@ const DataLogger = (() => {
     _save();
   }
 
+  function _googleEntryName(id) {
+    const s = String(id).trim();
+    if (!s) return '';
+    return s.startsWith('entry.') ? s : `entry.${s}`;
+  }
+
+  /**
+   * POSTs to a Google Form via a hidden iframe (avoids fetch CORS).
+   * Payload omits codeAttempts, codeUnlocked, codeUnlockedAt. See google-form-config.js.
+   */
+  function trySubmitGoogleForm() {
+    const cfg = typeof window !== 'undefined' ? window.CLEARWATER_GOOGLE_FORM : null;
+    const actionUrl = cfg && typeof cfg.actionUrl === 'string' ? cfg.actionUrl.trim() : '';
+    if (!actionUrl || !actionUrl.includes('formResponse')) {
+      return { ok: false, reason: 'not_configured' };
+    }
+
+    const flatFull = getFlatData();
+    const dupKey = `clearwater_v2_gform_${flatFull.participantId}_${flatFull.sessionEndTime || 'pending'}`;
+    try {
+      if (sessionStorage.getItem(dupKey)) {
+        return { ok: true, reason: 'already_sent' };
+      }
+    } catch (e) {
+      /* ignore */
+    }
+
+    const flat = { ...flatFull };
+    delete flat.codeAttempts;
+    delete flat.codeUnlocked;
+    delete flat.codeUnlockedAt;
+
+    const entries = cfg.entries && typeof cfg.entries === 'object' ? cfg.entries : {};
+    const fields = {};
+
+    const payloadId = entries.payload;
+    if (payloadId != null && String(payloadId).trim() !== '') {
+      const name = _googleEntryName(payloadId);
+      if (name) fields[name] = JSON.stringify(flat);
+    }
+
+    Object.keys(entries).forEach((key) => {
+      if (key === 'payload') return;
+      const eid = entries[key];
+      if (eid == null || String(eid).trim() === '') return;
+      if (!Object.prototype.hasOwnProperty.call(flat, key)) return;
+      const name = _googleEntryName(eid);
+      if (!name) return;
+      fields[name] = flat[key];
+    });
+
+    const names = Object.keys(fields);
+    if (!names.length) {
+      return { ok: false, reason: 'no_fields' };
+    }
+
+    _postGoogleFormIframe(actionUrl, fields);
+
+    try {
+      sessionStorage.setItem(dupKey, '1');
+    } catch (e) {
+      /* ignore */
+    }
+
+    return { ok: true, reason: 'submitted' };
+  }
+
+  function _postGoogleFormIframe(actionUrl, fields) {
+    const iframeName = `gf_${Date.now()}`;
+    const iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.setAttribute('title', 'Form submit');
+    iframe.style.cssText = 'position:absolute;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = actionUrl;
+    form.target = iframeName;
+    form.setAttribute('accept-charset', 'UTF-8');
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = String(value);
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+
+    // Removing the form too soon can abort the POST in some browsers.
+    let done = false;
+    const cleanup = () => {
+      if (done) return;
+      done = true;
+      try {
+        form.remove();
+      } catch (e) {
+        /* ignore */
+      }
+      setTimeout(() => {
+        try {
+          iframe.remove();
+        } catch (e2) {
+          /* ignore */
+        }
+      }, 8000);
+    };
+
+    setTimeout(cleanup, 5000);
+  }
+
   function getData() {
     return JSON.parse(JSON.stringify(_data));
   }
@@ -126,7 +240,6 @@ const DataLogger = (() => {
 
     return {
       participantId: d.participantId,
-      group: d.group,
       language: d.language,
       sessionStartTime: d.sessionStartTime,
       sessionEndTime: d.sessionEndTime,
@@ -202,6 +315,7 @@ const DataLogger = (() => {
     getFlatData,
     downloadCSV,
     downloadJSON,
+    trySubmitGoogleForm,
   };
 })();
 

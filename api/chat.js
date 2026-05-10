@@ -10,8 +10,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  const baseUrl = process.env.OPENAI_BASE_URL || 'https://ai01.ev-cuhk.net/v1';
+  const apiKeyRaw = process.env.OPENAI_API_KEY;
+  const apiKey = typeof apiKeyRaw === 'string' ? apiKeyRaw.trim() : '';
+  const baseUrl = (process.env.OPENAI_BASE_URL || 'https://ai01.ev-cuhk.net/v1').replace(/\/$/, '');
 
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured on server' });
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: model || 'gpt-5-nano',
+        model: model || 'gpt-5',
         messages,
         max_tokens: max_tokens || 500,
         temperature: temperature ?? 0.7,

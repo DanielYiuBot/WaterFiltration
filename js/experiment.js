@@ -7,19 +7,10 @@ const Experiment = (() => {
 
   const TASK2_UNLOCK_CODE = '2026';
   const MIN_TASK2_TRIALS = 3;
+  /** Task 2 UI lives in this section; Dr. H2O is only visible here (not Task 1 or other screens). */
+  const TASK2_SCREEN_ID = 'lab-screen';
   let _participantId = '';
-  let _group = '';
   let _currentStep = 'login-screen';
-
-  function assignGroup(id) {
-    let hash = 0;
-    const normalized = id.trim().toUpperCase();
-    for (let i = 0; i < normalized.length; i++) {
-      hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
-      hash |= 0;
-    }
-    return (Math.abs(hash) % 2 === 0) ? 'ai' : 'control';
-  }
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
@@ -28,20 +19,29 @@ const Experiment = (() => {
     _currentStep = id;
 
     const backBtn = document.getElementById('back-btn');
-    if (id === 'lab-screen') {
+    if (id === TASK2_SCREEN_ID) {
       backBtn.classList.remove('hidden');
     } else {
       backBtn.classList.add('hidden');
     }
 
     updateChatbotVisibility(id);
+    if (id === TASK2_SCREEN_ID && window.Lab && typeof Lab.updateTrialStatus === 'function') {
+      Lab.updateTrialStatus();
+    }
+    if (id === 'completion-screen') {
+      updateCompletionSummary();
+    }
     window.scrollTo(0, 0);
   }
 
   function updateChatbotVisibility(screenId) {
     const chatbot = document.querySelector('dr-h2o');
     if (!chatbot) return;
-    const visible = screenId === 'task1-screen' || screenId === 'task1-demo-screen' || screenId === 'lab-screen';
+    const visible = screenId === TASK2_SCREEN_ID;
+    if (!visible && window.DrH2OElement) {
+      window.DrH2OElement.collapse();
+    }
     chatbot.style.display = visible ? '' : 'none';
   }
 
@@ -49,7 +49,6 @@ const Experiment = (() => {
     setupLogin();
     setupInstructions();
     setupCodeLock();
-    setupCompletion();
 
     const chatbot = document.querySelector('dr-h2o');
     if (chatbot) chatbot.style.display = 'none';
@@ -70,8 +69,7 @@ const Experiment = (() => {
       }
       err.classList.add('hidden');
       _participantId = id;
-      _group = assignGroup(id);
-      DataLogger.init(_participantId, _group);
+      DataLogger.init(_participantId);
       showScreen('instructions-screen');
     };
 
@@ -106,7 +104,7 @@ const Experiment = (() => {
       err.classList.add('hidden');
       DataLogger.markCodeUnlocked();
       Lab.resetTask2State();
-      showScreen('lab-screen');
+      showScreen(TASK2_SCREEN_ID);
     };
 
     btn.addEventListener('click', unlock);
@@ -119,13 +117,6 @@ const Experiment = (() => {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') unlock();
     });
-  }
-
-  function setupCompletion() {
-    const dlBtn = document.getElementById('download-data-btn');
-    if (dlBtn) {
-      dlBtn.addEventListener('click', () => DataLogger.downloadJSON());
-    }
   }
 
   function goToCodeLock() {
@@ -160,25 +151,30 @@ const Experiment = (() => {
     return true;
   }
 
+  function updateCompletionSummary() {
+    const data = DataLogger.getData();
+    const idEl = document.getElementById('completion-id-val');
+    const t1 = document.getElementById('completion-task1-val');
+    const t2 = document.getElementById('completion-task2-val');
+    if (!idEl || !t1 || !t2) return;
+    idEl.textContent = data.participantId;
+    t1.textContent = data.task1.completedAt ? I18n.t('statusDone') : I18n.t('statusPending');
+    t2.textContent = data.task2.completedAt ? I18n.t('statusDone') : `${data.task2.attempts.length}`;
+  }
+
   function finishExperiment() {
     DataLogger.finishSession();
-    const data = DataLogger.getData();
-    document.getElementById('completion-id-val').textContent = data.participantId;
-    document.getElementById('completion-group-val').textContent =
-      data.group === 'ai' ? I18n.t('groupAI') : I18n.t('groupControl');
-    document.getElementById('completion-task1-val').textContent =
-      data.task1.completedAt ? I18n.t('statusDone') : I18n.t('statusPending');
-    document.getElementById('completion-task2-val').textContent =
-      data.task2.completedAt ? I18n.t('statusDone') : `${data.task2.attempts.length}`;
+    try {
+      DataLogger.trySubmitGoogleForm();
+    } catch (err) {
+      console.error('trySubmitGoogleForm failed (completion still proceeds)', err);
+    }
+    updateCompletionSummary();
     showScreen('completion-screen');
   }
 
   function getTask2UnlockCode() {
     return TASK2_UNLOCK_CODE;
-  }
-
-  function getGroup() {
-    return _group;
   }
 
   function getTask2AttemptCount() {
@@ -189,10 +185,14 @@ const Experiment = (() => {
     return getTask2AttemptCount() >= MIN_TASK2_TRIALS;
   }
 
+  function isTask2Screen() {
+    return _currentStep === TASK2_SCREEN_ID;
+  }
+
   return {
     init,
     showScreen,
-    assignGroup,
+    isTask2Screen,
     goToCodeLock,
     onTask1RankingAttempt,
     onTask1Hint,
@@ -202,8 +202,8 @@ const Experiment = (() => {
     completeTask2,
     getTask2AttemptCount,
     canCompleteTask2,
+    updateCompletionSummary,
     getTask2UnlockCode,
-    getGroup,
   };
 })();
 

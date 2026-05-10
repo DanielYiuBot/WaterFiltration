@@ -18,8 +18,8 @@ const STRINGS = {
 
   instructionsTitle: { zh: '實驗說明', en: 'Instructions' },
   instructionsText: {
-    zh: '任務一:\n比較不同濾水物料的過濾效果\n\n任務二：\n泥濘的河水濾水挑戰\n怎樣排列不同濾材，才能令河水變得較清澈？',
-    en: 'You will complete two tasks.\n\nTask 1: Rank materials by gap size from largest to smallest.\nAfter the correct order is built, the app runs four parallel filtration animations and shows each filter score (clarity and speed).\n\nTask 2: Muddy river water filtration challenge.\nDrag materials to build a filter stack and observe clarity and flow speed.'
+    zh: '任務1:\n比較不同濾水物料的過濾效果\n\n任務二：\n泥濘的河水濾水挑戰\n怎樣排列不同濾材，才能令河水變得較清澈？',
+    en: 'Task 1:\nCompare the filtering effectiveness of different water‑filtering materials\n\nTask 2:\nMuddy river water filtration challenge.\nDrag materials to build a filter stack and observe clarity and flow speed.'
   },
   instructionsBtn: { zh: '前往任務 1', en: 'Go to Task 1' },
 
@@ -92,22 +92,28 @@ const STRINGS = {
   tryAgain: { zh: '重新嘗試', en: 'Try Again' },
   finishTask2: { zh: '完成任務 2', en: 'Finish Task 2' },
   task2MaxMaterials: { zh: '最多只能放入 4 種濾材，請先移除一層再加入新的濾材。', en: 'You can place at most 4 materials in the filter. Remove one layer before adding another.' },
-  task2TrialStatus: { zh: '請至少完成 3 次濾水嘗試。目前：{done}/3', en: 'Complete at least 3 filtration trials. Current: {done}/3' },
+  task2NeedFourWorksheet: {
+    zh: '請先按照工作紙，把全部 4 種濾材放入濾瓶，並排成工作紙上的其中一種標準排列方法（方法 A、B 或 C），再按「開始過濾」。',
+    en: 'Follow your worksheet: place all four materials in the bottle using one of the stacking methods given (methods A, B, or C), then press Start Filtering.',
+  },
+  task2NotWorksheetOrder: {
+    zh: '此次序並非工作紙上所規定的任一種標準排列方法（並不符合方法 A、B 或 C）。請對照工作紙調整後再按「開始過濾」。',
+    en: 'This stack does not match any of methods A, B, or C on your worksheet. Match your worksheet layout, then press Start Filtering again.',
+  },
+  task2TrialStatus: {
+    zh: '請至少完成 3 次濾水嘗試。目前：{done}/3',
+    en: 'Please complete at least 3 filtration trials. Progress: {done}/3.',
+  },
   task2Ready: { zh: '已完成 3 次濾水嘗試，可以完成任務 2。', en: 'You have completed 3 filtration trials and can finish Task 2.' },
   clogWarning: { zh: '濾材堵塞，請調整順序', en: 'Filter clogged, adjust the order' },
 
   completionTitle: { zh: '實驗完成！', en: 'Experiment Complete!' },
   completionText: { zh: '感謝你的參與，資料已儲存。', en: 'Thank you for participating. Data is saved.' },
   completionId: { zh: '參與者編號', en: 'Participant ID' },
-  completionGroup: { zh: '實驗組別', en: 'Experiment Group' },
   completionTask1: { zh: '任務 1', en: 'Task 1' },
   completionTask2: { zh: '任務 2', en: 'Task 2' },
   statusDone: { zh: '已完成', en: 'Completed' },
   statusPending: { zh: '未完成', en: 'Pending' },
-  groupAI: { zh: 'AI 輔助組', en: 'AI-Assisted Group' },
-  groupControl: { zh: '對照組', en: 'Control Group' },
-  downloadData: { zh: '下載實驗數據', en: 'Download Data' },
-
   askPlaceholder: { zh: '輸入問題，例如：為什麼這層放上面？', en: 'Ask a question, e.g. Why should this layer be on top?' },
   sendBtn: { zh: '送出', en: 'Send' },
   thinking: { zh: 'Dr. H2O 思考中…', en: 'Dr. H2O is thinking...' },

@@ -11,30 +11,51 @@ const MATERIAL_STATS = {
 
 const TASK2_INITIAL = { turbidity: 100, name: 'muddy-river' };
 
+// Exact outcomes for the three reference stacks from teaching materials.
+// layers[] order is top → bottom (first drop lands at bottom; addLayer uses unshift).
+const TASK2_VARIANT_KEYS = {
+  A: 'gravel>coarseSand>sand>cotton',
+  B: 'coarseSand>sand>gravel>cotton',
+  C: 'cotton>sand>coarseSand>gravel',
+};
+
+function classifyTask2Variant(layers) {
+  if (!layers || layers.length !== 4) return null;
+  const key = layers.join('>');
+  if (key === TASK2_VARIANT_KEYS.A) return 'A';
+  if (key === TASK2_VARIANT_KEYS.B) return 'B';
+  if (key === TASK2_VARIANT_KEYS.C) return 'C';
+  return null;
+}
+
 const TASK2_EXAMPLE_RESULTS = {
+  // A：gravel→…→cotton（與昔日「C」預設對調數值：清澈度較佳）
   'gravel>coarseSand>sand>cotton': {
-    clarity: 85,
-    flowTime: 50,
-    scienceExplanation: '濾材由大空隙到小空隙，能逐步阻擋不同大小的雜質，效果較穩定',
+    clarity: 90,
+    flowTime: 70,
+    scienceExplanation: '過濾效果：水最清澈。濾材由大空隙到小空隙，能逐步阻擋不同大小雜質。',
   },
-  'coarseSand>gravel>cotton>sand': {
-    clarity: 60,
-    flowTime: 40,
-    scienceExplanation: '排列不太平均，有些細小雜質可能未能有效被逐層阻擋',
+  // B：由上而下 粗砂粒→幼砂粒→石頭→棉花（與舊版 B 層序相反）
+  'coarseSand>sand>gravel>cotton': {
+    clarity: 65,
+    flowTime: 80,
+    scienceExplanation: '過濾效果：水較混濁。次序未完全由大到小，清澈度與流速居中。',
   },
+  // C：cotton→…→gravel（與昔日「A」預設對調數值：清澈度較差）
   'cotton>sand>coarseSand>gravel': {
-    clarity: 70,
-    flowTime: 75,
-    scienceExplanation: '細小空隙的濾材在下方，水流較慢，較容易阻塞，但可阻擋較細雜質',
+    clarity: 40,
+    flowTime: 120,
+    scienceExplanation: '過濾效果：水最混濁。細小空隙濾材在下方時較易堵塞，泥沙較難順序阻擋。',
   },
 };
 
 function computeFilterResult(layers) {
   const turbidityStart = TASK2_INITIAL.turbidity;
   let turbidity = turbidityStart;
+  const task2Variant = classifyTask2Variant(layers);
 
   const exampleResult = getTask2ExampleResult(layers);
-  if (exampleResult) return exampleResult;
+  if (exampleResult) return { ...exampleResult, task2Variant };
 
   const clogged = isClogged(layers);
   if (clogged) {
@@ -47,6 +68,7 @@ function computeFilterResult(layers) {
       clogged: true,
       score: 5,
       scienceExplanation: '濾材堵塞，請調整順序',
+      task2Variant: null,
     };
   }
 
@@ -74,6 +96,7 @@ function computeFilterResult(layers) {
     clogged: false,
     score,
     scienceExplanation: getFallbackScienceExplanation(layers, orderPenalty),
+    task2Variant,
   };
 }
 
@@ -140,8 +163,10 @@ function getTask1MaterialDemoResult(material) {
 
 window.Scoring = {
   computeFilterResult,
+  classifyTask2Variant,
   MATERIAL_STATS,
   TASK2_INITIAL,
   TASK2_EXAMPLE_RESULTS,
+  TASK2_VARIANT_KEYS,
   getTask1MaterialDemoResult,
 };
