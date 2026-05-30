@@ -5,7 +5,7 @@
 const STRINGS = {
   siteTitle: { zh: 'ClearWater Lab — 濾水實驗室 V2', en: 'ClearWater Lab — Water Filtration Lab V2' },
   langToggle: { zh: 'EN', en: '中文' },
-  backToTask1: { zh: '← 返回任務 1', en: '← Back to Task 1' },
+  backToTask1: { zh: '← 返回任務一', en: '← Back to Task 1' },
 
   heroTitle: { zh: 'ClearWater Lab', en: 'ClearWater Lab' },
 
@@ -103,7 +103,7 @@ const STRINGS = {
   },
   task2TrialStatus: {
     zh: '請至少完成 3 次濾水嘗試。目前：{done}/3',
-    en: 'Please complete at least 3 filtration trials. Progress: {done}/3.',
+    en: 'Please complete at least 3 water filtration attempts. Current: {done}/3',
   },
   task2Ready: { zh: '已完成 3 次濾水嘗試，可以完成任務 2。', en: 'You have completed 3 filtration trials and can finish Task 2.' },
   clogWarning: { zh: '濾材堵塞，請調整順序', en: 'Filter clogged, adjust the order' },
