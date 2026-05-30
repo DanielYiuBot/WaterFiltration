@@ -31,6 +31,26 @@ function pickApiKey(keys) {
   return keys[randomInt(keys.length)];
 }
 
+function normalizeLanguage(language) {
+  return language === 'en' ? 'en' : 'zh';
+}
+
+function buildLanguageGuard(language) {
+  if (normalizeLanguage(language) === 'en') {
+    return 'The user interface language setting is English. You MUST respond only in English for this reply. Do not answer in Chinese unless the user explicitly asks for translation.';
+  }
+
+  return '使用者介面語言設定是中文。你必須只使用繁體中文回覆這一次訊息。除非使用者明確要求翻譯，否則不要使用英文作答。';
+}
+
+function withLanguageGuard(messages, language) {
+  const safeMessages = Array.isArray(messages) ? messages : [];
+  return [
+    { role: 'system', content: buildLanguageGuard(language) },
+    ...safeMessages,
+  ];
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -52,7 +72,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { model, messages, max_tokens, temperature } = req.body;
+    const { model, messages, max_tokens, temperature, language } = req.body;
 
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
@@ -62,7 +82,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: model || 'gpt-5',
-        messages,
+        messages: withLanguageGuard(messages, language),
         max_tokens: max_tokens || 500,
         temperature: temperature ?? 0.7,
       }),

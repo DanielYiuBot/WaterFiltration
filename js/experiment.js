@@ -120,6 +120,8 @@ const Experiment = (() => {
   }
 
   function goToCodeLock() {
+    const input = document.getElementById('code-lock-input');
+    if (input) input.value = TASK2_UNLOCK_CODE;
     showScreen('code-screen');
   }
 

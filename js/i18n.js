@@ -18,10 +18,10 @@ const STRINGS = {
 
   instructionsTitle: { zh: '實驗說明', en: 'Instructions' },
   instructionsText: {
-    zh: '任務1:\n比較不同濾水物料的過濾效果\n\n任務二：\n泥濘的河水濾水挑戰\n怎樣排列不同濾材，才能令河水變得較清澈？',
-    en: 'Task 1:\nCompare the filtering effectiveness of different water‑filtering materials\n\nTask 2:\nMuddy river water filtration challenge.\nDrag materials to build a filter stack and observe clarity and flow speed.'
+    zh: '任務一:\n比較不同濾水物料的過濾效果\n\n任務二：\n泥濘的河水濾水挑戰\n怎樣排列不同濾材，才能令河水變得較清澈？',
+    en: 'Task 1:\nCompare the filtering effectiveness of different water‑filtering materials.\n\nTask 2:\nMuddy river water filtration challenge\nhow should different filter materials be arranged to make the river water clearer?'
   },
-  instructionsBtn: { zh: '前往任務 1', en: 'Go to Task 1' },
+  instructionsBtn: { zh: '前往任務一', en: 'Go to Task 1' },
 
   task1Title: { zh: '任務一：比較不同濾水物料的過濾效果', en: 'Task 1: Compare the filtering effectiveness of different water‑filtering materials' },
   task1Subtitle: {
@@ -39,7 +39,7 @@ const STRINGS = {
   rankingReady: { zh: '排序正確！可開始平行濾水展示。', en: 'Correct order! You can start the parallel demo.' },
   startParallelDemo: { zh: '確認次序', en: 'Confirm Order' },
   task1ClearAll: { zh: '清除排序', en: 'Clear Order' },
-  task1DemoTitle: { zh: '任務 1：平行濾水展示', en: 'Task 1: Parallel Filtering Demo' },
+  task1DemoTitle: { zh: '任務 一：平行濾水展示', en: 'Task 1: Parallel Filtering Demo' },
   task1DemoDesc: { zh: '四種濾材會同時進行濾水，完成時間不同，因此結果卡會依序出現。', en: 'The four materials filter water at the same time. Their result cards appear at different times because each material has a different flow speed.' },
   demoRunning: { zh: '展示進行中…', en: 'Running demo...' },
   proceedCodeLock: { zh: '下一頁', en: 'Next Page' },
@@ -64,13 +64,14 @@ const STRINGS = {
 
   codeLockTitle: { zh: '任務解鎖', en: 'Task Unlock' },
   codeLockDesc: { zh: '請輸入正確代碼以進入任務 2。', en: 'Enter the correct code to unlock Task 2.' },
+  codeLockPrefilled: { zh: '代碼已預先輸入，請直接按「解鎖任務二」按鈕繼續。', en: 'The code has been preinputted. Please proceed by clicking the “Unlock Task 2” button directly.' },
   codeLockPlaceholder: { zh: '輸入代碼', en: 'Enter code' },
-  codeLockBtn: { zh: '解鎖任務 2', en: 'Unlock Task 2' },
+  codeLockBtn: { zh: '解鎖任務二', en: 'Unlock Task 2' },
   codeLockBackBtn: { zh: '上一頁', en: 'Previous Page' },
   codeLockWrong: { zh: '代碼錯誤，請再試一次。', en: 'Incorrect code, please try again.' },
   codeLockSuccess: { zh: '解鎖成功！', en: 'Unlocked successfully!' },
 
-  task2Title: { zh: '任務 2：泥濘河水濾水挑戰', en: 'Task 2: Muddy River Water Water Filtration Challenge' },
+  task2Title: { zh: '任務 二：泥濘河水濾水挑戰', en: 'Task 2: Muddy River Water Water Filtration Challenge' },
   taskLabel: { zh: '當前任務', en: 'Current Task' },
   task2Desc: { zh: '目標：提升清澈度並維持合理流速。', en: 'Goal: Improve clarity while keeping a reasonable flow speed.' },
   gravel: { zh: '石頭', en: 'Gravel' },
@@ -114,6 +115,7 @@ const STRINGS = {
   completionTask2: { zh: '任務 2', en: 'Task 2' },
   statusDone: { zh: '已完成', en: 'Completed' },
   statusPending: { zh: '未完成', en: 'Pending' },
+  chatbotName: { zh: '水博士', en: 'Dr. H2O' },
   askPlaceholder: { zh: '輸入問題，例如：為什麼這層放上面？', en: 'Ask a question, e.g. Why should this layer be on top?' },
   sendBtn: { zh: '送出', en: 'Send' },
   thinking: { zh: 'Dr. H2O 思考中…', en: 'Dr. H2O is thinking...' },

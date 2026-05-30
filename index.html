@@ -176,9 +176,10 @@
     <div class="experiment-card centered-card">
       <h2 data-i18n="codeLockTitle">任務解鎖</h2>
       <p class="experiment-subtitle" data-i18n="codeLockDesc">請輸入正確代碼以進入任務 2。</p>
+      <p class="code-lock-note" data-i18n="codeLockPrefilled">代碼已預先輸入，請直接按「解鎖任務 2」按鈕繼續。</p>
       <div class="form-group">
         <label for="code-lock-input" data-i18n="codeLockPlaceholder">輸入代碼</label>
-        <input id="code-lock-input" class="form-input" type="text" data-i18n-placeholder="codeLockPlaceholder" />
+        <input id="code-lock-input" class="form-input" type="text" value="2026" data-i18n-placeholder="codeLockPlaceholder" />
       </div>
       <p id="code-lock-error" class="form-error hidden" data-i18n="codeLockWrong">代碼錯誤，請再試一次。</p>
       <button id="code-lock-btn" class="btn btn-primary btn-lg btn-full" data-i18n="codeLockBtn">解鎖任務 2</button>
