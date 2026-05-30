@@ -170,6 +170,7 @@ const Lab = (() => {
       const el = document.createElement('div');
       el.className = `filter-layer layer-${mat}`;
       el.dataset.index = i;
+      el.dataset.material = mat;
 
       const label = document.createElement('span');
       label.className = 'layer-label';
@@ -188,6 +189,23 @@ const Lab = (() => {
       el.appendChild(removeBtn);
       bottleLayers.appendChild(el);
     }
+  }
+
+  function updateLayerLabels() {
+    if (!bottleLayers) return;
+
+    bottleLayers.querySelectorAll('.filter-layer').forEach((el) => {
+      const mat = el.dataset.material || layers[Number(el.dataset.index)];
+      const label = el.querySelector('.layer-label');
+      const removeBtn = el.querySelector('.layer-remove');
+      if (label && mat) label.textContent = I18n.t(mat);
+      if (removeBtn) removeBtn.title = I18n.t('removeLayer');
+    });
+  }
+
+  function updateLanguage() {
+    updateLayerLabels();
+    updateTrialStatus();
   }
 
   async function startFiltering() {
@@ -276,5 +294,8 @@ const Lab = (() => {
     resetTask2State,
     getLastResult,
     updateTrialStatus,
+    updateLanguage,
   };
 })();
+
+window.Lab = Lab;
