@@ -167,6 +167,10 @@ function applyI18n() {
 
   const toggleBtn = document.getElementById('lang-toggle');
   if (toggleBtn) toggleBtn.textContent = t('langToggle');
+
+  if (window.Lab && typeof window.Lab.updateTrialStatus === 'function') {
+    window.Lab.updateTrialStatus();
+  }
 }
 
 window.I18n = { t, getLang, setLang, toggleLang, applyI18n, STRINGS };
